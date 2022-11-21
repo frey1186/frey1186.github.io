@@ -1,0 +1,84 @@
+#!/bin/sh
+
+ZABBIX_SERVER=172.16.102.101
+HOSTMETADATA="aix"
+CONF_DIR="/etc/zabbix"
+CONF_INCLUDE_DIR="${CONF_DIR}/zabbix_agentd"
+PID_FILE_DIR="/var/run/zabbix"
+LOG_FILE_DIR="/var/log/zabbix"
+BIN_FILE_DIR="/usr/local/bin/zabbix"
+
+
+echo "###### make zabbix user  #####"
+
+[ ! `grep ^zabbix /etc/group` ] && mkgroup zabbix;
+[ ! `grep ^zabbix /etc/passwd` ] && useradd -g zabbix zabbix;
+chuser login=false zabbix
+
+echo done.
+
+mkdir -p ${CONF_DIR} ${CONF_INCLUDE_DIR} ${PID_FILE_DIR} ${LOG_FILE_DIR} ${BIN_FILE_DIR}
+chown zabbix:zabbix ${PID_FILE_DIR} ${LOG_FILE_DIR} -R
+
+
+echo -n "###### make config file ..."
+cat >${CONF_DIR}/zabbix_agentd.conf << EOF
+PidFile=${PID_FILE_DIR}/zabbix_agentd.pid
+LogFile=${LOG_FILE_DIR}/zabbix_agentd.log
+Server=${ZABBIX_SERVER}
+ServerActive=${ZABBIX_SERVER}
+Include=${CONF_INCLUDE_DIR}/*.conf
+Hostname=$(hostname)
+HostMetadata=${HOSTMETADATA}
+EOF
+
+echo done.
+
+
+
+echo -n "###### copy bin file"
+
+AIX_LEVEL=$(oslevel)
+cp ${AIX_LEVEL}/sbin/zabbix_agentd ${BIN_FILE_DIR}
+cp ${AIX_LEVEL}/bin/* ${BIN_FILE_DIR}
+
+chmod +x ${BIN_FILE_DIR}/*
+
+echo done.
+
+# start at reboot
+chmod +x zabbixagent.sh
+cp -p ./zabbixagent.sh /etc/rc.d/rc2.d/Kzabbixagentd
+cp -p ./zabbixagent.sh /etc/rc.d/rc2.d/Szabbixagentd
+
+echo " ########## start the agentd.."
+
+/etc/rc.d/rc2.d/Szabbixagentd restart 
+
+
+
+#~/zabbix-agents/zabbix_agent_bin/aix $ tree
+#.
+#├── 6.1.0.0
+#│   ├── bin
+#│   │   ├── zabbix_get
+#│   │   └── zabbix_sender
+#│   └── sbin
+#│       ├── zabbix_agent
+#│       └── zabbix_agentd
+#├── 7.1.0.0
+#│   ├── bin
+#│   │   ├── zabbix_get
+#│   │   └── zabbix_sender
+#│   └── sbin
+#│       └── zabbix_agentd
+#├── 7.2.0.0
+#│   ├── bin
+#│   │   ├── zabbix_get
+#│   │   └── zabbix_sender
+#│   └── sbin
+#│       └── zabbix_agentd
+#├── install-and-start.sh
+#├── install-and-start-v2.sh
+#└── zabbixagent.sh
+

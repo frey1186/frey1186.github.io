@@ -1,0 +1,73 @@
+
+mkdir -p /test
+cd /test
+nmon -tAdfKLMNOPVY^ -s 5 -c 1200
+iostat -RDTl 1 > iostat.out.`date +%F-%H-%M`  &
+vmstat -ItWw 1 > vmstat.out.`date +%F-%H-%M`  &
+mkdir -p perfdata; cd perfdata; perfpmr.sh 60 
+
+cd /home/test
+nmon -tAdfKLMNOPVY^ -s 5 -c 120
+iostat -RDTl 1 600 >iostat.out.`date +%F-%H-%M`  &
+mkdir -p perfdata-t; cd perfdata-t; 
+perfpmr.sh -x trace.sh -I -L 50000000 -T 50000000 10 
+perfpmr.sh -x monitor.sh 60
+time dd if=/dev/hdisk21 of=/dev/null  bs=8k count=1000000;time dd if=/dev/hdisk21 of=/dev/null  bs=8k count=1000000
+## dd 命令Linux和AIX存在差异，直接对比不好；
+
+
+##################   收集awr报告 ###################################
+SQL>
+exec DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT();
+host sleep 600 ## 3600
+exec DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT();
+@$ORACLE_HOME/rdbms/admin/awrrpt.sql
+
+
+
+# 正式环境测试
+mkdir -p /test ; cd /test; rm -rf /test/*;
+nmon -tAdfKLMNOPVY^ -s 5 -c 1200  
+iostat -RDTl 1  > iostat.out.`date +%F-%H-%M`  &
+mkdir -p perfdata; cd perfdata; perfpmr.sh 60 &
+
+只收集数据：perfpmr.sh -x trace.sh -I -g -L 20000000 -T 20000000 5
+
+# 压缩perfpmr数据命令
+perfpmr.sh -z ../perfdata.pax.gz
+
+
+#########  2022-1-28 碰到svmon时间很长的问题 #############################
+## https://www.ibm.com/support/pages/apar/IJ27280
+## https://www.ibm.com/support/pages/apar/IJ31765  svmon bug
+## 01-27 链接：https://pan.baidu.com/s/1P-P7ZsBKHewO9bjBqYu7pA  提取码：aaft 
+## 01-28 链接：https://pan.baidu.com/s/1WZp-sOPYOC2oQVKIdorMJg  提取码：5bsf
+## 收集命令：
+cd /test2
+nmon -tAdfKLMNOPVY^ -s 5 -c 1200
+iostat -RDTl 1 > iostat.out.`date +%F-%H-%M`  &
+vmstat -ItWw 1 > vmstat.out.`date +%F-%H-%M`  &
+mkdir  -p perfdata; cd perfdata
+perfpmr.sh -x trace.sh -L 50000000 -T 50000000 15 
+perfpmr.sh -x iptrace.sh 60
+
+#########################################################################
+
+
+
+
+
+
+
+nmon -tAdfKLMNOPVY^ -s 5 -c 120
+iostat -RDTl 1 600 >iostat.out.`date +%F-%H-%M`  &
+vmstat -ItWw 1 600 > vmstat.out.`date +%F-%H-%M`  &
+
+su - oracle
+
+sqlplus / as sysdba <<EOF
+exec DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT();
+host sleep 600 ## 3600
+exec DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT();
+EOF
+

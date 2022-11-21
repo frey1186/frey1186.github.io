@@ -1,0 +1,38 @@
+---
+
+layout: default
+title: "Blog"
+
+---
+
+
+<!-- <div class="col-md-12"> !-->
+<div>
+    <p>
+        最近在学习xv6的文档和代码，计划在这部分内容写一些OS内核相关的内容。
+    </p>
+</div>
+
+<div class="">
+          {% for post in site.tags.os %}
+          <article class="post">
+              <header>
+                    <h2 style="border-left: solid 5px; 
+                    border-color: green;
+                    padding-left: 10px;">
+                      <a href="{{post.url}}" title="{{ post.title }}">
+                        {{ post.title }}
+                      </a>
+                    </h2>
+                  
+               </header>
+               <div class="con">
+                  <p>
+                      {{ post.content | strip_html | truncate:300 }}
+                      <!-- <a class="more small" href="{{ post.url }}">[More]</a> -->
+                  </p>
+               </div>
+          </article>
+          <br>
+          {% endfor %}
+</div>

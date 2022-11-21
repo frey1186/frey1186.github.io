@@ -1,0 +1,140 @@
+
+
+http://archive.zfsonlinux.org/epel/zfs-release.el7.noarch.rpm
+
+
+
+# complie spl
+
+yum -y install kernel-devel
+./configure --build=powerpc64-unknown-linux-gnu --prefix=/opt/sql --with-linux=/usr/src/kernels/4.18.0-305.el8.ppc64le
+
+
+
+
+./configure --enable-server \
+--enable-ldiskfs \
+--with-linux=/usr/src/kernel/4.18
+
+
+
+# 1. prepare e2fsprogs 
+
+e2fsprogs-master  download pkgs
+https://build.whamcloud.com/job/e2fsprogs-master/arch=ppc64le,distro=el8/
+
+yum install e2fsprogs e2fsprogs-devel e2fsprogs-libs libcom_err libcom_err-devel libss libss-devel
+
+# 2. git lustre 
+$ git clone git://git.whamcloud.com/fs/lustre-release.git
+$ cd lustre-release
+
+[build@aiserver1 ~]$ git checkout 2.12.7
+[build@aiserver1 lustre-release]$ sh autogen.sh
+configure.ac:15: installing 'config/compile'
+configure.ac:10: installing 'config/config.guess'
+configure.ac:10: installing 'config/config.sub'
+configure.ac:12: installing 'config/install-sh'
+configure.ac:12: installing 'config/missing'
+libcfs/libcfs/autoMakefile.am: installing 'config/depcomp'
+
+# 3. prepare patched kernel
+
+cd $HOME
+mkdir -p kernel/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+cd kernel
+echo '%_topdir %(echo $HOME)/kernel/rpmbuild' > ~/.rpmmacros
+
+
+rpm -ivh ftp://172.16.100.29/os/rhel/8.4/8.4src/BaseOS/Packages/kernel-4.18.0-305.el8.src.rpm
+
+
+[build@aiserver1 ~]$ cd kernel/rpmbuild/
+[build@aiserver1 rpmbuild]$ rpmbuild -bp --target=`uname -m` ./SPECS/kernel.spec
+
+缺少很多包，需要安装：
+yum -y install asciidoc \
+audit-libs-devel \
+binutils-devel \
+bison \
+clang \
+dwarves \
+elfutils-devel \
+flex \
+java-devel \
+kabi-dw \
+libbabeltrace-devel \
+libbpf-devel \
+libcap-devel \
+libcap-ng-devel \
+libmnl-devel \
+llvm \
+ncurses-devel \
+newt-devel \
+numactl-devel \
+pciutils-devel \
+perl-devel \
+perl-generators \
+python3-devel \
+python3-docutils \
+xmlto \
+xz-devel \
+perl-ExtUtils-Embed.noarch
+
+
+报错Error: Unable to find a match: libbabeltrace-devel libbpf-devel libmnl-devel
+需要手动安装下面几个包：
+[root@aiserver1 ~]# wget http://rpmfind.net/linux/centos/8-stream/PowerTools/ppc64le/os/Packages/dwarves-1.22-1.el8.ppc64le.rpm
+[root@aiserver1 ~]# rpm -ivh dwarves-1.22-1.el8.ppc64le.rpm --nodeps
+
+[root@aiserver1 ~]# yum localinstall http://rpmfind.net/linux/centos/8-stream/PowerTools/ppc64le/os/Packages/libbabeltrace-devel-1.5.4-3.el8.ppc64le.rpm
+
+[root@aiserver1 ~]# yum localinstall http://rpmfind.net/linux/centos/8-stream/PowerTools/ppc64le/os/Packages/libbpf-devel-0.2.0-1.el8.ppc64le.rpm
+
+[root@aiserver1 ~]# yum localinstall http://rpmfind.net/linux/centos/8-stream/PowerTools/ppc64le/os/Packages/libmnl-devel-1.0.4-6.el8.ppc64le.rpm
+
+
+## 4. 复制内核配置到指定目录
+
+[build@aiserver1 rpmbuild]$ cp ~/kernel/rpmbuild/BUILD/kernel-4.18.0-305.el8/linux-4.18.0-305.el8.ppc64le/configs/kernel-4.18.0-ppc64le.config  ~/lustre-release/lustre/kernel_patches/kernel_configs/kernel-4.18.0-rhel8-ppc64le.config
+
+## 5. 修改IO 调度算法，没改
+Find the line with '# IO Schedulers' and insert following two lines below it:
+CONFIG_IOSCHED_DEADLINE=y
+CONFIG_DEFAULT_IOSCHED="deadline"
+
+
+# 6. patch for kernel
+cd ~/lustre-release/lustre/kernel_patches/series
+for patch in $(<"4.18-rhel8.series"); do \
+      patch_file="$HOME/lustre-release/lustre/kernel_patches/patches/${patch}"; \
+      cat "${patch_file}" >> "$HOME/lustre-kernel-aarch64-lustre.patch"; \
+done
+[build@aiserver1 ~]$ cp ~/lustre-kernel-ppc64le-lustre.patch  ~/kernel/rpmbuild/SOURCES/patch-4.18.0-lustre.patch
+
+sed -i.inst -e '/^    find $RPM_BUILD_ROOT\/lib\/modules\/$KernelVer/a\
+    cp -a fs/ext4/* $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/fs/ext4\
+    rm -f $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/fs/ext4/ext4-inode-test*' \
+-e '/^# empty final patch to facilitate testing of kernel patches/i\
+Patch99995: patch-%{version}-lustre.patch' \
+-e '/^ApplyOptionalPatch linux-kernel-test.patch/i\
+ApplyOptionalPatch patch-%{version}-lustre.patch' \
+~/kernel/rpmbuild/SPECS/kernel.spec
+
+
+
+[build@aiserver1 ~]$ echo '# ppc64le' > ~/kernel/rpmbuild/SOURCES/kernel-4.18.0-ppc64le.config
+[build@aiserver1 ~]$ cat ~/lustre-release/lustre/kernel_patches/kernel_configs/kernel-4.18.0-rhel8-ppc64le.config  >> ~/kernel/rpmbuild/SOURCES/kernel-4.18.0-ppc64le.config
+
+
+
+
+[build@aiserver1 rpmbuild]$ buildid="_lustre"
+[build@aiserver1 rpmbuild]$ rpmbuild -ba --with fireware --target ppc64le --with baseonly \
+> --without kabichk --define "buildid ${buildid}" \
+>            ~/kernel/rpmbuild/SPECS/kernel.spec
+
+
+
+
+

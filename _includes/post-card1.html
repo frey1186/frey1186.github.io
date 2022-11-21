@@ -1,0 +1,25 @@
+<div class="col-lg-6">
+    <div class="card">
+        <div class="row row-0">
+            <div class="col-3">
+                <a href="{{post.url}}" title="{{ post.title }}">
+                    <img src="/images/index-imgs/{{post.tags[0]}}.png"
+                         class="w-100 h-100 object-cover" alt="null.png" 
+                                                          onerror="this.src='/images/index-imgs/null.png'">
+                </a>
+            </div>
+            <div class="col">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <a href="{{post.url}}" title="{{ post.title }}">
+                            {{ post.title | truncate:20 }}
+                        </a>
+                    </h3>
+                    <p class="text-muted">
+                    {{ post.content | strip_html | truncate:100 }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

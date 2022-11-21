@@ -1,0 +1,13 @@
+---
+
+layout: default
+title: "All Blogs"
+
+---
+
+{% for post in site.posts %}
+<div class="">
+    {{ post.date | date: "%Y-%m-%d "  }}   |
+    <a href="{{post.url}}" title="{{ post.title }}">{{ post.title }}</a>
+</div>
+{% endfor %}

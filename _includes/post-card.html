@@ -1,0 +1,16 @@
+<div class="col-md-6 col-lg-4">
+    <div class="card">
+        <div class="card-img-top img-responsive img-responsive-21x9" 
+             style="background-image: url(/images/index-imgs/{{post.tags[0]}}.png)"></div>
+        <div class="card-body">
+            <h3 class="card-title">
+                <a href="{{post.url}}" title="{{ post.title }}">
+                    {{ post.title | truncate:15 }}
+                </a>
+            </h3>
+            <p class="text-muted">
+            {{ post.content | strip_html | truncate:100 }}
+            </p>
+        </div>
+    </div>
+</div>

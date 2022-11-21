@@ -1,0 +1,92 @@
+#!/bin/bash
+# Version: 2.0
+# Date: 2020-11-20
+# 
+WORKDIR=/usr/local/bin/myssh_file
+DATAFILE=$WORKDIR/myssh.data
+EXPFILE=$(/usr/bin/mktemp)
+mkdir -p $WORKDIR
+touch $DATAFILE
+
+echo_help() {
+echo ""
+echo "Usage: $0"
+echo "             -l           	List the host in datafile."
+echo "             -n lineID cmd   	Connect the host list with line id."
+echo "             -e           	Edit the datafile with vi."
+echo "             -s           	Connect a new host, like: root@192.168.1.1"
+echo "             -a           	Add a host to datafile."
+echo "             -A h:u:p:d   	Add a host strings to datafile."
+echo ""
+}
+
+if [ ! $1 ] 
+then
+	echo_help
+	exit
+fi
+
+if [ $1 == '-l' ]
+then
+	echo -e "No\tHostname\tUser\tDescriptions..."
+	grep -vE "^#|^$" $DATAFILE| awk 'BEGIN{FS=":";OFS="\t"} {print NR,$1,substr($2,1,7),$4}'
+	exit
+fi
+
+if [[ $1 == '-n' && $2 -gt 0 ]]
+then
+	host_line=`/usr/bin/grep -vE "^#|^$" $DATAFILE| sed -n "$2p"`
+	HOSTNAME=`echo $host_line|cut -d: -f1`
+	USERNAME=`echo $host_line|cut -d: -f2`
+	PASSWORD=`echo $host_line|cut -d: -f3`
+	CMD=$3
+	/usr/bin/cat >$EXPFILE <<-EOF
+        spawn /usr/bin/ssh -l $USERNAME $HOSTNAME $CMD
+        expect {
+        "*yes/no*" { send "yes\r"; exp_continue }
+        "*assword*" { send "$PASSWORD\r" }
+        }
+       interact
+        # expect eof
+EOF
+	/usr/bin/expect -f $EXPFILE
+	rm -f $EXPFILE
+	exit
+fi
+
+
+if [ $1 == '-e' ]
+then
+	vim $DATAFILE
+	exit
+fi
+
+if [ $1 == '-s' ]
+then
+	# delete $1 
+	shift 1; ssh $@
+	exit
+fi
+
+if [ $1 == '-a' ]
+then
+	echo -n "Hostname or IP: "
+	read HOSTNAME
+	echo -n "Username: "
+	read USERNAME
+	echo -n "Password: "
+	read -s PASSWORD
+	echo ""
+	echo -n "Description:"
+	read DESC
+	echo "$HOSTNAME:$USERNAME:$PASSWORD:$DESC" >> $DATAFILE
+	exit
+fi
+
+if [[ $1 == '-A' && `echo $2|awk -F":" '{ print NF-1}'` == 3 ]]
+then
+	echo $2 >> $DATAFILE
+	exit
+fi
+
+echo_help

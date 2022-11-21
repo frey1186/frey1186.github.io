@@ -1,0 +1,16 @@
+
+
+# HMC 启动ssh和远程web
+chhmc -c network -s modify -i eth0 -a 10.152.107.27 -nm 255.255.0.0 --lparcomm on 
+chhmc -c network -s modify -h vhmc1 -d ips.com -g 10.152.11.1
+chhmc -c ssh -s enable 
+chhmc -c remotewebui -s enable -i eth0 
+hmcshutdown -r -t now 
+
+
+
+
+# 创建 lv 和 fs
+mkdir -p /app
+mklv -e x -t jfs2 -y mylv myvg 100
+crfs -v jfs2 -a logname=INLINE -a agblksize=4096 -a ea=v2 -A yes -d mylv -m /app -p rw -t no

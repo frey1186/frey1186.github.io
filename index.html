@@ -1,0 +1,21 @@
+---
+
+layout: default
+title: "Blog"
+
+---
+
+
+<div class="row row-card">
+    {% for categorie in site.categories %}
+
+    {% if categorie[0] == "public"%}
+
+    {% for post in categorie[1] limit:12 %}
+
+    {% include post-card1.html%}
+
+    {% endfor %}
+    {% endif %}
+    {% endfor%}
+</div>

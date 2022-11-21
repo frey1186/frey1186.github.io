@@ -1,0 +1,133 @@
+#################################  安装原理  ########################################
+
+- 从DHCP服务器获得IP地址，pxelinux.0文件和tftp服务器的位置；            ---> /etc/dhcp/dhcpd.conf
+- 从tftp服务器获得pxelinux.0文件并启动                                  ---> /etc/xinet.d/tftp  &  pxelinux.cfg/default
+- 从tftp服务器上获得memdisk和win7 pe iso                                ---> pxelinux.cfg/default
+- 权限交给win7pe，执行install.bat                                       ---> install.bat  & winpeshl.ini
+- 挂载samba服务器位置，并执行setup.exe开始安装程序                      ---> install.bat  &  /etc/samba/smb.conf
+
+#################################  准备工作  ########################################
+# 关闭selinux，停止防火墙
+[root@c7-pxe-server network-scripts]# sed -i 's#SELINUX=enforcing#SELINUX=disabled#g'  /etc/selinux/config
+[root@c7-pxe-server network-scripts]# systemctl disable firewalld
+# 安装这几个包
+[root@c7-pxe-server network-scripts]# yum list|grep -E "http|dhcp|tftp|syslinux"
+[root@c7-pxe-server network-scripts]# yum -y install httpd dhcp syslinux tftp-server
+
+# 挂载win7 iso
+[root@c7-pxe-server ~]# mkdir -p  /var/www/html/win7/iso
+[root@c7-pxe-server ~]# mount /dev/sr0 /var/www/html/win7/iso
+
+################################ install and  config samba #######################
+[root@c7-pxe-server ~]# yum -y install samba
+[root@c7-pxe-server ~]# vim /etc/samba/smb.conf    # 注释必须单行注释，不能添加在行尾
+[global]
+        log file = /var/log/samba/log.%m
+        max log size = 5000
+        security = user
+        guest account = nobody
+        map to guest = Bad User
+        load printers = yes
+        cups options = raw
+[share]
+        comment = share
+        path = /var/www/html
+        directory mask  = 0755
+        guest ok        = yes
+
+[root@c7-pxe-server ~]# systemctl enable smb
+[root@c7-pxe-server ~]# systemctl enable dhcpd
+[root@c7-pxe-server ~]# systemctl enable httpd
+
+
+################################  config  dhcp ################################
+[root@c7-pxe-server ~]# vim /etc/dhcp/dhcpd.conf
+[root@c7-pxe-server ~]# cat /etc/dhcp/dhcpd.conf
+
+subnet 192.168.72.0 netmask 255.255.255.0 {
+        range 192.168.72.100 192.168.72.200;
+        option subnet-mask 255.255.255.0;
+        next-server 192.168.72.3;
+        filename "/pxelinux.0";
+       }
+
+[root@c7-pxe-server ~]# systemctl start dhcpd
+[root@c7-pxe-server ~]#
+
+##############################  config  tftp ############################
+
+[root@c7-pxe-server ~]# sed -i  '/disable/s#yes#no#g' /etc/xinetd.d/tftp
+[root@c7-pxe-server ~]# cat /etc/xinetd.d/tftp
+
+service tftp
+{
+        socket_type             = dgram
+        protocol                = udp
+        wait                    = yes
+        user                    = root
+        server                  = /usr/sbin/in.tftpd
+        server_args             = -c -s /tftpboot
+        disable                 = no
+        per_source              = 11
+        cps                     = 100 2
+        flags                   = IPv4
+}
+[root@c7-pxe-server ~]# vim /usr/lib/systemd/system/tftp.service
+[root@c7-pxe-server ~]# cat /usr/lib/systemd/system/tftp.service
+[Unit]
+Description=Tftp Server
+Requires=tftp.socket
+Documentation=man:in.tftpd
+
+[Service]
+ExecStart=/usr/sbin/in.tftpd -s /tftpboot
+StandardInput=socket
+
+[Install]
+Also=tftp.socket
+
+[root@c7-pxe-server ~]# systemctl start tftp
+[root@c7-pxe-server ~]# systemctl enable tftp
+
+#  config tftp directory
+[root@c7-pxe-server ~]# mkdir /tftpboot
+[root@c7-pxe-server ~]# cd /tftpboot/
+[root@c7-pxe-server tftpboot]# cp /usr/share/syslinux/pxelinux.0 .
+[root@c7-pxe-server tftpboot]# mkdir -p /tftpboot/pxelinux.cfg
+[root@c7-pxe-server tftpboot]# cp /usr/share/syslinux/memdisk .
+[root@c7-pxe-server tftpboot]#
+[root@c7-pxe-server tftpboot]# vim install.bat
+[root@c7-pxe-server tftpboot]#
+[root@c7-pxe-server tftpboot]# vim winpeshl.ini
+[root@c7-pxe-server tftpboot]# cat install.bat
+wpeinit.exe
+net use \\192.179.72.3\share
+\\192.179.72.3\share\win7\iso\setup.exe
+
+[root@c7-pxe-server tftpboot]# cat winpeshl.ini
+[launchApps]
+install.bat
+[root@c7-pxe-server tftpboot]#
+[root@c7-pxe-server tftpboot]# vim pxelinux.cfg/default
+[root@c7-pxe-server tftpboot]# ls
+install.bat  memdisk  pxelinux.0  pxelinux.cfg  winpeshl.ini
+
+# download and install wimtools
+[root@c7-pxe-server ~]# yum -y install wget vim tree epel-release
+[root@c7-pxe-server ~]# wget http://li.nux.ro/download/nux/dextop/el7/x86_64//wimtools-1.9.2-2.el7.nux.x86_64.rpm
+[root@c7-pxe-server ~]# wget http://li.nux.ro/download/nux/dextop/el7/x86_64/libwim15-1.9.2-2.el7.nux.x86_64.rpm
+[root@c7-pxe-server ~]# yum localinstall wimtools-1.9.2-2.el7.nux.x86_64.rpm libwim15-1.9.2-2.el7.nux.x86_64.rpm
+[root@c7-pxe-server tftpboot]# yum -y install mkisofs
+
+# 将install.bat这个文件封装进pe，进入pe环境的时候就会执行该文件
+[root@c7-pxe-server tftpboot]# mkwinpeimg -W /var/www/html/win7/iso/  -s install.bat  -i win7pe.iso
+[root@c7-pxe-server tftpboot]# du -h win7pe.iso
+201M    win7pe.iso
+[root@c7-pxe-server tftpboot]# cat pxelinux.cfg/default
+default win7
+label win7
+	kernel memdisk
+	initrd win7pe.iso
+	append iso raw
+	
+#######################  END  ############################

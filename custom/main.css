@@ -1,0 +1,32 @@
+
+/* for all pages 1024px */
+.container-xl{
+    max-width:1024px;
+}
+
+/*  post content  */
+.post-content {
+    font-family: serif;
+	font-size: 20px;
+}
+
+.post-content h1{
+  border-bottom: gray solid 1px;
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+
+/* text-center */
+.text-center h1{
+	font-size: 25px;
+}
+
+/* font size for code */
+pre.highlight {
+    font-size: 16px;
+}
+
+/* for index.html cards. */
+.card .card {
+    min-height: 180px;
+}

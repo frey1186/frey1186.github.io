@@ -1,0 +1,74 @@
+[root@pxe ~]# cd /tftpboot/
+[root@pxe tftpboot]# ls
+boot.ipxe  ipxe.efi  undionly.kpxe
+
+# /tftpboot 下的两个文件来自 ipxe-bootimgs
+[root@pxe html]# ls -l /usr/share/ipxe/
+total 3700
+-rw-r--r--. 1 root root  288256 Aug  9  2019 ipxe.dsk
+-rw-r--r--. 1 root root  741120 Aug  9  2019 ipxe.efi
+-rw-r--r--. 1 root root 1048576 Aug  9  2019 ipxe.iso
+-rw-r--r--. 1 root root  288693 Aug  9  2019 ipxe.lkrn
+-rw-r--r--. 1 root root 1343488 Aug  9  2019 ipxe.usb
+-rw-r--r--. 1 root root   73090 Aug  9  2019 undionly.kpxe
+[root@pxe html]# rpm -qf /usr/share/ipxe/ipxe.efi
+ipxe-bootimgs-20180825-2.git133f4c.el7.noarch
+
+# boot.ipxe 启动脚本
+[root@pxe tftpboot]# cat boot.ipxe
+#!ipxe
+:start
+menu PXE Boot Options
+item shell iPXE shell
+item centos7-net CentOS 7 installation
+item exit  Exit to BIOS
+choose --default centos7-net --timeout 2000 option && goto ${option}
+:shell
+shell
+:centos7-net
+set base http://192.168.72.131
+set server_root ${base}/mnt
+initrd ${server_root}/images/pxeboot/initrd.img
+kernel ${server_root}/images/pxeboot/vmlinuz inst.ks=${base}/centos7.ks initrd=initrd.img net.ifname=0 biosdevname=0
+#kernel ${server_root}/images/pxeboot/vmlinuz inst.repo=${server_root}/ ip=dhcp initrd=initrd.img inst.geoloc=0 devfs=nomount
+boot
+:exit
+exit
+
+[root@pxe tftpboot]# cd /var/www/html/
+# /mnt 用来挂载iso
+[root@pxe html]# df -h |grep mnt
+/dev/sr0                 942M  942M     0 100% /mnt
+[root@pxe html]# ls -l
+total 4
+-rw-rw-r-- 1 root root 1263 Sep  8 16:53 centos7.ks
+lrwxrwxrwx 1 root root    4 Sep  8 07:53 mnt -> /mnt
+[root@pxe html]#
+
+# 服务启动这两个就行
+[root@pxe html]# systemctl |grep -E "httpd|dnsmasq"
+dnsmasq.service          loaded active running   DNS caching server.
+httpd.service            loaded active running   The Apache HTTP Server
+[root@pxe html]#
+
+# dnsmasq的主配置
+[root@pxe html]# cat /etc/dnsmasq.conf
+port=0
+listen-address=192.168.72.131
+interface=eth1
+
+enable-tftp
+tftp-root=/tftpboot
+
+dhcp-range=192.168.72.200,192.168.72.250,255.255.255.0
+#dhcp-range=192.168.72.200,static,255.255.255.0
+
+dhcp-vendorclass=BIOS,PXEClient:Arch:00000
+dhcp-match=set:ipxe,175
+dhcp-boot=tag:!ipxe,tag:BIOS,undionly.kpxe
+dhcp-boot=tag:!ipxe,tag:!BIOS,ipxe.efi
+dhcp-boot=tag:ipxe,boot.ipxe
+
+#dhcp-host=00:0c:29:55:77:75,192.168.72.202,cn2
+
+

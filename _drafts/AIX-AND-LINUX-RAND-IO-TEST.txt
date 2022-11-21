@@ -1,0 +1,76 @@
+
+-bash-4.2# cat mydd.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#define BUF_SIZE 8192
+#define COUNT  1000000
+
+int main(void){
+
+        int n;
+        char buf[BUF_SIZE];
+        int i=0;
+
+        while(( n = read(STDIN_FILENO, buf, BUF_SIZE)) > 0) {
+
+                if( write(STDOUT_FILENO, buf, n) != n ){
+                        perror("write()");
+                        exit(1);
+                }
+                i++;
+                if(i >= COUNT) break;
+
+        }
+
+        if(n<0){
+                perror("read()");
+                exit(1);
+        }
+
+        exit(0);
+}
+-bash-4.2# cat test.sh
+#!/usr/bin/bash
+func=$1
+smt=$2
+function rand(){
+        for ((i=0;i<smt;i++));
+        do
+                /home/test/mydd < /dev/random >/home/test/ddfile-$i.out &
+        done
+        echo "start $smt rand dd"
+}
+
+function zero(){
+        for ((i=0;i<smt;i++));
+        do
+                /home/test/mydd < /dev/zero >/home/test/ddfile-$i.out &
+        done
+        echo "start $smt zero dd"
+}
+
+if [ `ps -ef |grep mydd |grep -v grep |wc -l` -gt 0 ];
+then
+        kill -9 `ps -ef |grep mydd |grep -v grep |awk '{print $2}'`
+fi
+
+rm -rf /home/test/ddfile-*
+
+$func
+
+
+#############  linux test： 
+
+[root@nimol-server test]# ./test.sh rand 1;sleep 5;export S_TIME_FORMAT=ISO;iostat -tNxm 1 300 > ./linux-iostat.txt
+start 1 rand dd
+
+
+
+#############  AIX test：
+-bash-4.2# ./test.sh rand 1;sleep 5;nmon -tAdfKLMNOPVY^ -s 1 -c 300; iostat -RDTl  1 300 > ./aix-iostat.txt
+start 1 rand dd

@@ -1,0 +1,19 @@
+<article class="post">
+    <header>
+        <h2 style="border-left: solid 5px; 
+                     border-color: green;
+                     padding-left: 10px;">
+            <a href="{{post.url}}" title="{{ post.title }}">
+                {{ post.title }}
+            </a>
+        </h2>
+
+    </header>
+    <div class="con">
+        <p>
+        {{ post.content | strip_html | truncate:300 }}
+        <!-- <a class="more small" href="{{ post.url }}">[More]</a> -->
+        </p>
+    </div>
+</article>
+<br>

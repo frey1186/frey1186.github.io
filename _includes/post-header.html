@@ -1,0 +1,18 @@
+
+<div class="post-header">
+	<div class="text-center">
+		<h1>{{ page.title }}</h1>
+	</div>
+	<div class="text-center">
+        <span class="badge bg-azure">{{ page.date | date: "%B %-d, %Y" }}</span>
+		{% for t in page.tags %}
+		<span class="badge bg-teal">{{ t }}</span>   
+		{% endfor %}
+	</div>
+
+
+	<br>
+</div>
+
+
+

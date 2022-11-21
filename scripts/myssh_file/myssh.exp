@@ -1,0 +1,14 @@
+#!/usr/bin/expect
+set timeout 5
+set hostname [lindex $argv 0]
+set username [lindex $argv 1]
+set password [lindex $argv 2]
+
+spawn /usr/bin/ssh -l $username $hostname
+expect {
+"yes/no" { send "yes\r";exp_continue }
+"assword" { send "$password\r" }
+}
+interact
+# expect eof
+

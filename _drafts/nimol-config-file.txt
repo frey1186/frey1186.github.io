@@ -1,0 +1,70 @@
+#require
+centos6,(centos7 is a lot of pain because switched from sysv init to systemd)
+dhcpd server
+tftp server 
+fqdn hostname must resolve via /etc/hosts or dns
+firewall: if use open  67:69 tcp e udp,514 udp(rsyslog)
+
+#install those packages
+epel-release    
+libc-i386
+tftp-server
+tftp
+rcpbind     #link /etc/rc.d/init.d/rpcbin to  /etc/rc.d/init.d/portmap
+perl-xml    
+dhcpd  server
+nfs-utils
+xinetd
+perl-XML-LibXML
+bind-utils
+ssh
+
+#install those rpms from aix dvd 71 dvd-1
+for i in   nimol-1.0-4.noarch.rpm  osinstall-1.0-1.noarch.rpm;
+do rpm -Uvh $i;done
+
+#configure nimol
+touch /etc/nimol.conf
+nimol_config -m /usr/bin/ssh -C #configure nimol
+
+#example nimol.conf
+NIMOL_SERVER youserver.fqdn
+PORTMAP_STARTED yes
+REMOTE_ACCESS_METHOD /usr/bin/ssh
+NIMOL_SUBNET 192.168.0.0
+LABEL default /export/aix/default
+NIMOL_SYSLOG_FACILITY local2
+
+#run nimol
+#insert dvd aix71 in /dev/cdrom
+nimol_config
+
+
+#edit dchpd.conf and enable boot
+#boot
+allow bootp;
+use-host-decl-names on;
+
+#check if nfs working
+exportfs -v
+
+#enable syslog remote(not required)
+syslogd     #run with options -r -h
+rsyslogd    #edit /etc/rsyslogd enable 514 udp remote
+
+#create first client
+nimol_install -c aix1 -g 192.168.0.203 -m 00:*:*:*:*:* -s 255.255.255.0 -L default
+service dchpd restart
+
+#if give error check tftp and dhcp conf files
+#you can check if working with 
+tftp yourserver
+get /tftpboot/aix1
+
+#to run client
+#boot from aix(sms menu selected from asmi or serial console)
+##configura ipl
+#boot from network
+
+#last warning: if softlink of tftp doesn't work use cp or hard link
+ln default.chrp.mp.ent aix1
