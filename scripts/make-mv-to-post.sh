@@ -42,8 +42,8 @@ done
 sed -i "s#^\!.*([^)]*/\(.*\))#\![](/images/$POST_FILENAME/\1)#g" $FILENAME \
 && echo "Done." || exit
 # 
-# 剪切到_post
-mv $FILENAME $WORKDIR/_post/
+# 剪切到_posts
+mv $FILENAME $WORKDIR/_posts/
 
 # echo -n "Use Git add and commit..."
 # #git add ./_posts/$POST_FILENAME.md \
