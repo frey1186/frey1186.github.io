@@ -198,7 +198,7 @@ BIOS --> MBR --> core.img (EF02 partition) --> grub.cfg --> vmlinuz --> ...
 
 下图显示了GRUB2在MBR和GPT两种格式下的不同之处，来之wikipedia
 
-![](/images/linux-system-startup/GNU_GRUB_components.svg.png)
+![](/images/2019-08-27-linux-system-startup/GNU_GRUB_components.svg.png)
 
 
 
@@ -347,7 +347,7 @@ ExecStop=/etc/rc.d/init.d/network stop
 
 systemd 启动过程，还是相当比较复杂的。
 
-![](/images/linux-system-startup/systemd-startup.png)
+![](/images/2019-08-27-linux-system-startup/systemd-startup.png)
 
 # x 参考资料
 

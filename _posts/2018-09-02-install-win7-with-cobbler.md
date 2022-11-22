@@ -165,15 +165,15 @@ Template Files                 : {}
 
 - 创建一个在cobbler服务器dhcp可分发的虚拟服务器，并启动
 
-![](/images/cobbler/win7-startup-1.png)
+![](/images/2018-09-02-install-win7-with-cobbler/win7-startup-1.png)
 
 - 系统会自动加载win7pe.iso文件，并进入安装系统PE界面
 
-![](/images/cobbler/win7-startup-2.png)
+![](/images/2018-09-02-install-win7-with-cobbler/win7-startup-2.png)
 
 - 自动执行脚本`install.cmd`中的命令，并进入安装界面，并完成所有配置
 
-![](/images/cobbler/win7-startup-3.png)
+![](/images/2018-09-02-install-win7-with-cobbler/win7-startup-3.png)
 
 
 

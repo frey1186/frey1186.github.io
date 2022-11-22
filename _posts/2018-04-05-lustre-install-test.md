@@ -8,7 +8,7 @@ categories: public
 typora-root-url: ..
 ---
 
-![](/images/lustre/lustre-arch.png)
+![](/images/2018-04-05-lustre-install-test/lustre-arch.png)
 
 # 0.环境准备
 

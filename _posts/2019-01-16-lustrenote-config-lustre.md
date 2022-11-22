@@ -13,7 +13,7 @@ typora-root-url: ..
 
 
 
-![](/images/config-lustre/config-lustre-top.png)
+![](/images/2019-01-16-lustrenote-config-lustre/config-lustre-top.png)
 
 
 

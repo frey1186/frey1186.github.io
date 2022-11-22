@@ -17,7 +17,7 @@ In [10]: nltk.download()  # 下载书中所需数据
 
 ```
 
-![](/images/python_nltk/nltk_download.png)
+![](/images/2017-03-06-python自然语言处理-语言处理与python/nltk_download.png)
 
 ```python
 In [49]: from nltk import book
@@ -81,7 +81,7 @@ In [56]: book.text4.dispersion_plot(["citizens","democracy","freedom","duties","
     ...: America"])
 ```
 
-![](/images/python_nltk/dispersion_plot.png)
+![](/images/2017-03-06-python自然语言处理-语言处理与python/dispersion_plot.png)
 
 
 
@@ -228,7 +228,7 @@ Out[6]:
 
 使用`fdist1.plot(20)`可以画出前20的词频统计图。
 
-![](/images/python_nltk/freqdist_plot.png)
+![](/images/2017-03-06-python自然语言处理-语言处理与python/freqdist_plot.png)
 
 ### 细粒度的选择词
 
@@ -293,15 +293,15 @@ In [19]: fdist.plot()
 
 ```
 
-![](/images/python_nltk/fdistcountplot.png)
+![](/images/2017-03-06-python自然语言处理-语言处理与python/fdistcountplot.png)
 
 
 
 nltk频率分布的相关函数
 
-![](/images/python_nltk/freq_dist_func1.png)
+![](/images/2017-03-06-python自然语言处理-语言处理与python/freq_dist_func1.png)
 
-![](/images/python_nltk/freq_dist_func2.png)
+![](/images/2017-03-06-python自然语言处理-语言处理与python/freq_dist_func2.png)
 
 
 

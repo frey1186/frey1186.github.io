@@ -75,7 +75,7 @@ listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes
 
 图示如下：
 
-![](/images/centos/pxe_process.png)
+![](/images/2017-06-14-Kickstart自动部署Centos6/pxe_process.png)
 
 说明：
 

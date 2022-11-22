@@ -109,7 +109,7 @@ windows server 2012 r2
 
 启动选择`livecd`即可
 
-![](/images/copy-a-windows-server-to-new-server/livecd-start.PNG)
+![](/images/2018-05-16-copy-a-windows-server-to-new-server/livecd-start.PNG)
 
 输入用户名和密码，这里是`root`/`root`
 

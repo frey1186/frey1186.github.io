@@ -8,7 +8,7 @@ categories: public
 typora-root-url: ..
 ---
 
-![](/images/lsf-mpi/para-compute.jpeg)
+![](/images/2018-03-30-lsf-mpich-mpi4py-test/para-compute.jpeg)
 
 # 1.env
 

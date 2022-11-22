@@ -382,7 +382,7 @@ Out[76]:
 ```
 下面是所有DataFrame能接受的数据类型：
 
-![](/images/python数据分析/data_to_dataframe.PNG)
+![](/images/2017-02-04-python数据分析-pandas入门/data_to_dataframe.PNG)
 
 
 
@@ -482,7 +482,7 @@ Out[96]: array([ True,  True,  True], dtype=bool)
 pandas中主要的index对象：
 
 
-![](/images/python数据分析/pandas_index.PNG)
+![](/images/2017-02-04-python数据分析-pandas入门/pandas_index.PNG)
 
 
 
@@ -507,7 +507,7 @@ Out[99]: False
 ```
 因此，索引也有自己的方法和属性：
 
-![](/images/python数据分析/pandas_index_method.PNG)
+![](/images/2017-02-04-python数据分析-pandas入门/pandas_index_method.PNG)
 
 
 
@@ -658,7 +658,7 @@ d    NaN   NaN         NaN
 
 reindex函数的参数
 
-![](/images/python数据分析/reindex_func.PNG)
+![](/images/2017-02-04-python数据分析-pandas入门/reindex_func.PNG)
 
 
 ## 2.2 丢弃指定轴上的项
@@ -874,10 +874,10 @@ Name: two, dtype: int32
 ```
 DataFrame的索引选项
 
-![](/images/python数据分析/dataframe_index_opt.PNG)
+![](/images/2017-02-04-python数据分析-pandas入门/dataframe_index_opt.PNG)
 
 
-![](/images/python数据分析/dataframe_index_opt2.PNG)
+![](/images/2017-02-04-python数据分析-pandas入门/dataframe_index_opt2.PNG)
 
 
 ## 2.4 算术运算和数据对齐
@@ -1247,7 +1247,7 @@ dtype: float64
 当然，有很多方法可以“打破”这种平级关系。
 
 
-![](/images/python数据分析/data_rank1.png)
+![](/images/2017-02-04-python数据分析-pandas入门/data_rank1.png)
 
 
 
@@ -1329,7 +1329,7 @@ ValueError: cannot reindex from a duplicate axis
 pandas有一组用于常用的数学和统计方法。他们一般都是基于没有缺失数据而构建的。
 下面是一些简约方法的选项：
 
-![](/images/python数据分析/pandas_sample_func_opt.png)
+![](/images/2017-02-04-python数据分析-pandas入门/pandas_sample_func_opt.png)
 
 
 
@@ -1376,9 +1376,9 @@ dtype: float64
 下面是描述和汇总统计相关的方法：
 
 
-![](/images/python数据分析/描述和汇总统计1.png)
+![](/images/2017-02-04-python数据分析-pandas入门/描述和汇总统计1.png)
 
-![](/images/python数据分析/描述和汇总统计2.png)
+![](/images/2017-02-04-python数据分析-pandas入门/描述和汇总统计2.png)
 
 
 ```python
@@ -1671,7 +1671,7 @@ dtype: object
 
 如下表：
 
-![](/images/python数据分析/pandas_unique_valuecounts_isin.png)
+![](/images/2017-02-04-python数据分析-pandas入门/pandas_unique_valuecounts_isin.png)
 
 
 形成一个相关列的柱状图
@@ -1722,7 +1722,7 @@ dtype: bool
 ```
 **注意**：python中的None值也会被当成Nan处理。
 
-![](/images/python数据分析/NA_process.png)
+![](/images/2017-02-04-python数据分析-pandas入门/NA_process.png)
 
 
 ## 4.1 滤除缺失数据
@@ -1879,10 +1879,10 @@ Out[178]:
 同样，也可以使用其他选项
 
 
-![](/images/python数据分析/fillna_opt1.png)
+![](/images/2017-02-04-python数据分析-pandas入门/fillna_opt1.png)
 
 
-![](/images/python数据分析/fillna_opt2.png)
+![](/images/2017-02-04-python数据分析-pandas入门/fillna_opt2.png)
 
 
 

@@ -98,7 +98,7 @@ mmlscluster: Command failed.  Examine previous error messages to determine cause
 
 ## 2.1拓扑
 
-![](/images/gpfs_install_test2/gpfs_top.png)
+![](/images/2017-10-07-gpfs-install-test2/gpfs_top.png)
 
 
 其中c01，c02作为服务端，c03作为客户端。

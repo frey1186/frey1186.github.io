@@ -117,11 +117,11 @@ Enter password:
 
 - 打开浏览器`http://zabbix-server/zabbix`
 
-![1603846284536](/images/install-zabbix-server-and-agent/1603846284536.png)
+![](/images/2020-12-04-Install-Zabbix-Server-and-Agent/1603846284536.png)
 
 修改中文界面
 
-![1603846260884](/images/install-zabbix-server-and-agent/1603846260884.png)
+![](/images/2020-12-04-Install-Zabbix-Server-and-Agent/1603846260884.png)
 
 # 2. Install Agent
 

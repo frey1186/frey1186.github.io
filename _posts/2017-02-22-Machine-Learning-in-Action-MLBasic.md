@@ -98,7 +98,7 @@ tags: machinelearning
 
 根据目的，可以进行选择算法，举个例子：
 
-![](/images/MLiA/机器学习算法的选择.png)
+![](/images/2017-02-22-Machine-Learning-in-Action-MLBasic/机器学习算法的选择.png)
 
 
 ## 需要收集和分析的数据是啥

@@ -13,7 +13,7 @@ typora-root-url: ..
 
 一个进程同时打开2个文件的情况，如下图：
 
-![image-20210315114452728](/lib/staticfile/linux-sys/APUE-2-fileio/image-20210315120537523.png)
+![](/images/2021-03-19-APUE-2-fileio/image-20210315120537523.png)
 
 有几个问题：
 

@@ -14,7 +14,7 @@ typora-root-url: ..
 # 1. 拓扑结构
 
 
-![](/images/lustre/config-lustre-pacemaker.png)
+![](/images/2019-02-24-lustrenote-config-lustre-pacemaker/config-lustre-pacemaker.png)
 
 ## 1.1 iscsi 服务器
 

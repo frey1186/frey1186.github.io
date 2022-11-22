@@ -21,7 +21,7 @@ Red Hat Enterprise Linux Server release 6.8 (Santiago)
 192.168.88.22 cpt01
 192.168.88.23 cpt02
 ```
-![](/images/pxeserver_install/pxeserver-install-top.png)
+![](/images/2017-11-08-pxeserver-install/pxeserver-install-top.png)
 
 ## 设置iptables和selinux
 ```bash

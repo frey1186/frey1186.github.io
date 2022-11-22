@@ -40,7 +40,7 @@ make nmon_x86_rhel75   # 3秒钟即可
 
 使用几个快捷键可以打开或关闭功能：
 
-![](/images/nmon/nmon-func.png)
+![](/images/2019-07-12-nmon-summary/nmon-func.png)
 
 
 

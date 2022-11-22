@@ -112,7 +112,7 @@ label centos7
 
 启动一个虚拟机，测试一下
 
-![](/images/pxeserver_install/diskless-netboot-01.png)
+![](/images/2018-09-08-pxe-netboot-centos/diskless-netboot-01.png)
 
 # 2.内存启动（`pxe+livecd`）
 
@@ -140,7 +140,7 @@ livecd-creator         livecd-iso-to-disk     livecd-iso-to-pxeboot
 
 - 就可以直接启动一个虚拟机来测试了
 
-![](/images/pxeserver_install/pxe-livecd-01.png)
+![](/images/2018-09-08-pxe-netboot-centos/pxe-livecd-01.png)
 
 
 

@@ -97,7 +97,7 @@ make
 
 
 
-![img](/images/install-linux-ppc64-with-qemu/centos7-vm-with-qemu.png)
+![](/images/2019-11-04-install-linux-ppc64-with-qemu/centos7-vm-with-qemu.png)
 
 
 # 三、关于模拟AIX
@@ -118,7 +118,7 @@ make
 
 由于虚拟机里测试，不知道什么情况，一直卡在下面的界面：
 
-![img](/images/install-linux-ppc64-with-qemu/error-of-aix.png)
+![](/images/2019-11-04-install-linux-ppc64-with-qemu/error-of-aix.png)
 
 
 四、关于虚拟机网络

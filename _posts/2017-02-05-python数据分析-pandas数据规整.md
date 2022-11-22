@@ -167,9 +167,9 @@ Out[19]:
 
 merge选项：
 
-![](/images/python数据分析/pandas_merge_opt1.png)
+![](/images/2017-02-05-python数据分析-pandas数据规整/pandas_merge_opt1.png)
 
-![](/images/python数据分析/pandas_merge_opt2.png)
+![](/images/2017-02-05-python数据分析-pandas数据规整/pandas_merge_opt2.png)
 
 
 ## 1.2 索引上的合并
@@ -551,7 +551,7 @@ Out[80]:
 4  2.673221 -1.143143       NaN  0.592930
 ```
 
-![](/images/python数据分析/pandas_concat_opt.png)
+![](/images/2017-02-05-python数据分析-pandas数据规整/pandas_concat_opt.png)
 
 ## 1.4 合并重叠数据
 
@@ -1456,9 +1456,9 @@ Out[16]: 2
 
 字符串内置方法：
 
-![](/images/python数据分析/python_inner_str_func1.png)
+![](/images/2017-02-05-python数据分析-pandas数据规整/python_inner_str_func1.png)
 
-![](/images/python数据分析/python_inner_str_func2.png)
+![](/images/2017-02-05-python数据分析-pandas数据规整/python_inner_str_func2.png)
 
 
 ## 4.2 正则表达式
@@ -1553,7 +1553,7 @@ Out[41]:
 
 ```
 
-![](/images/python数据分析/python_re_func.png)
+![](/images/2017-02-05-python数据分析-pandas数据规整/python_re_func.png)
 
 
 ## 4.3 pandas矢量化的字符串函数
@@ -1662,7 +1662,7 @@ dtype: object
 
 ```
 
-![](/images/python数据分析/矢量化字符串方法.png)
+![](/images/2017-02-05-python数据分析-pandas数据规整/矢量化字符串方法.png)
 
 
 

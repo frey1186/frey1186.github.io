@@ -83,7 +83,7 @@ pypxe-netboot $ pypxe  --config example_cfg.json
 
 启动虚拟机，使用网络启动即可。
 
-![](/images/pypxe/install-core-iso.gif)
+![](/images/2019-12-31-pypxe-test/install-core-iso.gif)
 
 
 # 3. 网络安装一个Linux
@@ -233,7 +233,7 @@ pypxe-netboot $pypxe --config example_cfg.json
 
 另外，在使用ipxe的时候，如果没有重启pypxe服务，同一个客户端再次重启的时候，会出现TFTP服务器不能获得文件的情况，这应该是防止重复部署操作系统的问题。
 
-![](/images/pypxe/tftp-error.png)
+![](/images/2019-12-31-pypxe-test/tftp-error.png)
 
 
 

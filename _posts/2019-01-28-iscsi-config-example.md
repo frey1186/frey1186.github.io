@@ -23,7 +23,7 @@ typora-root-url: ..
 
 
 
-![](/images/iscsi-config-example/top.jpg)
+![](/images/2019-01-28-iscsi-config-example/top.jpg)
 
 
 
@@ -99,7 +99,7 @@ Configuration saved to /etc/target/saveconfig.json
 
 
 
-![](/images/iscsi-config-example/iscsi-config.png)
+![](/images/2019-01-28-iscsi-config-example/iscsi-config.png)
 
 
 

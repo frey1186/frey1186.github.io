@@ -80,7 +80,7 @@ dhcp-boot=tag:ipxe,menu/boot.ipxe
 
 启动测试一下
 
-![pxe-boot-options](/images/install-win7-with-ipxe/pxe-boot-options.png)
+![](/images/2019-08-18-net-install-win7-with-ipxe/pxe-boot-options.png)
 
 
 
@@ -189,7 +189,7 @@ net use \\10.10.2.100\share
 
 测试一下效果
 
-![install win7 options](/images/install-win7-with-ipxe/install-win7-item.png)
+![](/images/2019-08-18-net-install-win7-with-ipxe/install-win7-item.png)
 
 # 3 其他
 

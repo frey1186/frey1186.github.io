@@ -8,7 +8,7 @@ categories: public
 typora-root-url: ..
 ---
 
-![](/images/vagrant/vagrant.jpeg)
+![](/images/2018-03-17-vagrant-simple-examples/vagrant.jpeg)
 
 # 1. Vagrant
 

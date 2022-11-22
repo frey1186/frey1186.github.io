@@ -24,7 +24,7 @@ Github地址：https://github.com/xcat2/xcat-core/
 
 xCat拓扑：
 
-![](/images/xcat-test/xcat-top.png)
+![](/images/2017-11-03-xcat-install-test/xcat-top.png)
 
 
 节点类型：

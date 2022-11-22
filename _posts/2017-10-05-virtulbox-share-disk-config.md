@@ -41,10 +41,10 @@ CentOS release 6.5 (Final)
 
 完成后状态如下：
 
-![](/images/vb_share_disk/新增磁盘.png)
+![](/images/2017-10-05-virtulbox-share-disk-config/新增磁盘.png)
 
 
-![](/images/vb_share_disk/修改磁盘属性.png)
+![](/images/2017-10-05-virtulbox-share-disk-config/修改磁盘属性.png)
 
 
 
@@ -81,7 +81,7 @@ localhost:VirtualBox VMs$ VBoxManage storageattach c03 --storagectl "SATA" \
 
 完成后状态如下：
 
-![](/images/vb_share_disk/虚拟机中的磁盘属性.png)
+![](/images/2017-10-05-virtulbox-share-disk-config/虚拟机中的磁盘属性.png)
 
 
 

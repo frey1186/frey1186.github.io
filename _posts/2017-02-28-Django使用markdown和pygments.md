@@ -108,7 +108,7 @@ content中一部分markdown文本作为例子，如下所示：
 
 查看markdown编写的内容已经被解析了。但是代码没有高亮。
 
-![](/images/django/markdown_code.png)
+![](/images/2017-02-28-Django使用markdown和pygments/markdown_code.png)
 
 
 # 3. pygments
@@ -146,4 +146,4 @@ dict_keys(['perldoc', 'vs', 'fruity', 'borland', 'monokai', 'xcode', 'autumn',
 
 可以了。
 
-![](/images/django/markdown_codehilite.png)
+![](/images/2017-02-28-Django使用markdown和pygments/markdown_codehilite.png)
