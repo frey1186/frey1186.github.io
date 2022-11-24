@@ -10,6 +10,8 @@ categories: os
 
 继续上一篇的 context switch 的调试。系统调用的过程后面再详细说明，这里就返回结果了。
 
+# 0x02 内核空间切换到用户空间
+
 当前的函数调用关系如下：
 
 ![](/images/2022-11-22-05-xv6-riscv-context-switch-2/sys_write-bt.png)
