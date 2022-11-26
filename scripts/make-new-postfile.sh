@@ -37,6 +37,7 @@ echo """---
 layout: post
 title: $TITLE
 date: $DATETIME
+mdate: $DATETIME
 tags: $TAGS
 categories: $CATA
 ---""" |tee  ./$POST_FILENAME.md

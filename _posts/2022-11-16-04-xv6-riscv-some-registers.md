@@ -11,7 +11,7 @@ categories: os
 文档。
 
 
-# `medeleg` 和 `mideleg` 寄存器
+# 1. `medeleg` 和 `mideleg` 寄存器
 
 默认情况下，所有异常和中断都发给M-mode来处理，但是xv6的实现主要都在
 S-mode下，这两个寄存器是将异常和中断委托给S-mode的关键所在。寄存器的
@@ -47,7 +47,7 @@ xv6的处理同样直接，将0-15位全部置1。
 
 
 
-# `PMP`寄存器
+# 2. `PMP`寄存器
 
 PMP是Physical Memory Protection的意思，需要在M-mode下设置指定的寄存器来
 限制内存区域的权限，需要在所有hart上执行。
@@ -63,6 +63,19 @@ w_pmpaddr0(0x3fffffffffffffull);
 w_pmpcfg0(0xf);
 ```
 
+# 3. `*ip` 和 `*ie`
+
+xv6中主要用到了 sip 和 sie 寄存器， sip = "S-mode interrupt pending"寄存器，保存了发生但是为处理的中断或者异常。 sie寄存器="S-mode interrupt enable", 根据bit位置保存相应的中断或异常是否开启。
+
+下图是FU540中sip各bit位的作用，比 ISA 文档更加直观。
+
+![](/images/2022-11-16-04-xv6-riscv-some-registers/sip.png)
+
+# 4. sstatus 寄存器
+
+sstatus寄存器与mstatus寄存器一样，表示当前cpu状态是否能够接受中断（sstatus.SIE）、 上一次中断是否打开(sstatus.SPIE)、 上一次运行模式(sstatus.SPP)，如果执行 sret 指令，切换中断打开情况和运行模式。
+
+![](/images/2022-11-16-04-xv6-riscv-some-registers/sstatus.png)
 
 
 
