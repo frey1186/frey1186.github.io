@@ -1,8 +1,6 @@
 ---
-
 layout: default
 title: "All Blogs"
-
 ---
 
 <div id="table-default" class="table-responsive">
@@ -19,16 +17,15 @@ title: "All Blogs"
             {% for post in site.posts %}
             <tr>
                 <td class="text-indigo">{{ post.date | date: "%Y-%m-%d "  }}</td>
-                <td class="text-teal">
-                    <h4>
-                    <a href="{{post.url}}" title="{{ post.title }}">{{ post.title }}</a>
-                    </h4>
-                </td>
                 <td class="">
+                    <!-- <td class="text-teal"> -->
+                    <a class="text-teal" href="{{post.url}}">{{ post.title }}</a>
+                    </td>
+                    <td class="">
                         {% for t in  post.tags %} 
-                        <span class="text-indigo">{{ t }}</span>
+                        <span class="badge bg-lime-lt">{{ t }}</span>
                         {% endfor%}</td>
-                <td class=""><center class="text-indigo">{{ post.categories }}</center></td>
+                    <td class=""><center class="badge bg-yellow-lt">{{ post.categories }}</center></td>
             </tr>
             {% endfor %}
         </tbody>
