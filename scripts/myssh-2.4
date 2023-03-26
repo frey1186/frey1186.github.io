@@ -1,0 +1,58 @@
+#!/bin/bash
+# Version: 2.4
+# Date: 2023-3-26
+# 
+# 
+WORKDIR="$(dirname $0)/myssh_file"
+DATAFILE=$WORKDIR/myssh.data
+EXPFILE=$(/usr/bin/mktemp)
+mkdir -p $WORKDIR
+touch $DATAFILE
+
+echo_help() {
+echo ""
+echo "Usage: $0"
+echo "             	           	List the host in datafile."
+echo "             -ID [cmd]   		Connect the host list with line id."
+echo "             -e           	Edit the datafile with vi."
+echo ""
+}
+
+## no args , list all hosts
+if [ ! $1 ] 
+then
+	echo -e "No\tHostname\tUser\tDescriptions..."
+	grep -vE "^#|^$" $DATAFILE| awk 'BEGIN{FS=":";OFS="\t"} {print NR,$1,substr($2,1,7),$4}'
+	exit
+fi
+
+## -e 
+if [ $1 == '-e' ]
+then
+	vim $DATAFILE
+	exit
+fi
+
+## connect to the host
+if [[ $1 -gt 0 ]]
+then
+	host_line=`grep -vE "^#|^$" $DATAFILE| sed -n "$1p"`
+	HOSTNAME=`echo $host_line|cut -d: -f1`
+	USERNAME=`echo $host_line|cut -d: -f2`
+	PASSWORD=`echo $host_line|cut -d: -f3`
+	CMD=$3
+	cat >$EXPFILE <<-EOF
+        spawn /usr/bin/ssh $USERNAME@$HOSTNAME $CMD
+        expect {
+        "*yes/no*" { send "yes\r"; exp_continue }
+        "*assword*" { send "$PASSWORD\r" }
+        }
+       interact
+        # expect eof
+EOF
+	expect -f $EXPFILE
+	rm -f $EXPFILE
+	exit
+fi
+
+echo_help
