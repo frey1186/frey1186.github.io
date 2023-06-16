@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 #
 # date: 2022-12-28
-# version: v0.1
-#
-# BUG: Can not parse the files under soft link dir 
-#      like : ~/chome linked to win home of user 
+# version: v0.2
 #
 
 import os.path as p
@@ -22,7 +19,7 @@ if not p.isfile(filename):
     print("%s is not a file." % filename)
     sys.exit(2)
 
-f_obspath = p.abspath(filename)
+f_obspath = os.path.realpath(os.path.abspath(filename))
 firefox = "win.firefox.exe"
 
 # file://///wsl.localhost/Ubuntu-20.04/tmp/6lHVixCC6.bmp
