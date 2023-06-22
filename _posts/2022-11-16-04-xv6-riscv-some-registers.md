@@ -63,6 +63,12 @@ w_pmpaddr0(0x3fffffffffffffull);
 w_pmpcfg0(0xf);
 ```
 
+> 2023-06-22 增加
+这两行代码注释调的话，使用新的qemu-system-riscv64 7.2.0 模拟器运行时候，会在start.c最后的mret指令时候无法正确的切换到
+S-mode。使用qemu-system-riscv64 4.2 下能正常运行，可能旧版本实现相对粗犷吧。
+![](/images/2022-11-16-04-xv6-riscv-some-registers/mret.png)
+
+
 # 3. `*ip` 和 `*ie`
 
 xv6中主要用到了 sip 和 sie 寄存器， sip = "S-mode interrupt pending"寄存器，保存了发生但是为处理的中断或者异常。 sie寄存器="S-mode interrupt enable", 根据bit位置保存相应的中断或异常是否开启。
