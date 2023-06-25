@@ -6,7 +6,8 @@
 
 /*  post content  */
 .post-content {
-    font-family: 'Source Serif Pro', 'Songti SC', 'SimSun', 'Serif', serif;
+    /*font-family: 'Source Serif Pro', 'Songti SC', 'SimSun', 'Serif', serif;*/
+    font-family: 'Noto Serif SC', "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 .post-content h1{
