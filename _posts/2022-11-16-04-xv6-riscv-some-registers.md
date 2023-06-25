@@ -83,7 +83,30 @@ sstatus寄存器与mstatus寄存器一样，表示当前cpu状态是否能够接
 
 ![](/images/2022-11-16-04-xv6-riscv-some-registers/sstatus.png)
 
+# 5. mstatus register
 
+可以参考 riscv-privileged-20211203.pdf 3.1.6 Machine Status Registers (mstatus and mstatush)
+
+mstatus寄存器表示M-mode下的该hart的状态，rv64下其长度为64bit，位图如下：
+
+![](/images/2022-11-16-04-xv6-riscv-some-registers/mstatus.png)
+
+每个bit代表的状态比较多，注意如下几个：
+
+- 全局中断相关的开关，MIE（bit3）和SIE（bit1）分别表示在M-mode和S-mode下中断是否打开。mstatus寄存器有MIE和SIE两个控制位，而sstatus只有SIE控制位；
+- 为了支持嵌套trap，需要保存：MPIE（bit7）/SPIE（bit5）保存进入trap时中断是否打开；MPP（bit12-11）/SPP（bit8）保存之前的特权模式；
+
+> 当M-mode下mret返回时，xIE = xPIE；xPIE = 1；运行模式 = MPP；MPP = U-mode;
+  当S-mode下sret返回时，xIE = xPIE；xPIE = 1；运行模式 = SPP；SPP = U-mode;
+  因此，当OS初始化的时候，CPU运行模式为M-mode，在mret返回之前，需要将MPP = S-mode；执行mret后，运行模式就设为S-mode；后续进入OS之后，执行sret就会进入U-mode。
+
+- Bit35-34：SXL  和 Bit33-32：UXL 表示S-mode和U-mode下寄存器的长度，1:32位，2:64位，3:128位；注意这两个位置都是只读的，由硬件确定不能修改；
+- 内存特权位，MPRV MXR SUM 待续；
+- 字节序控制位，MBE SBE UBE，表示除取指令之外的字节序控制，取指令均为LE方式，待续；
+- 虚拟化支持，TVM，待续；
+- 扩展功能，FS VS XS，待续；
+
+在xv6中需要关注的不多，只有MPP、MIE和SIE而已(kernel/start.c)。
 
 
 
