@@ -84,9 +84,9 @@ scratch数组包含5个元素：
 - scratch[3] = CLINT_MTIMECMP(id);
 - scratch[4] = interval;
 
-为啥需要这三个uint64类型的寄存器，主要是执行汇编计算新CLINT_MTIMECMP(id)的需要，可以看kernel/kernelvec.S: timervec 里面的内容。我觉得也可以用C实现，就不需要这个复杂的scratch数组，
-但整个过程可能未必比用timervec实现更简单。
+为啥需要这三个uint64类型的寄存器，主要是执行汇编计算新CLINT_MTIMECMP(id)的需要，可以看kernel/kernelvec.S: timervec 里面的内容。我觉得也可以用C实现，就不需要这个复杂的scratch数组，但整个过程可能未必比用timervec实现更简单。
 
+> timervec 是在发生时钟中断的时候，切换的目标地址，可能从U-mode切换过来，也可能从S-mode切换过来，是需要保存上下文的。这里使用了scratch数组的方式简单保存了几个用到的寄存器，是很好的实现方法。如果用c，反而比较麻烦。如果没有保存上下文，就会在mret之后无法返回到原来的地方。
 
 ## 2. timervec
 
