@@ -19,15 +19,15 @@ xv6-riscv 中存在多个切换的过程，比如系统调用要从 U-mode 切�
 
 ## 1. 低级别向高级别切换
 
-- ecall 指令，从 U-mode 切换到 S-mode； 其实也并不是直接切换到 S-mode，而是先切换到 M-mode，因为 M-mode的系统调用被委托给了 S-mode，所以由 S-mode 来处理；
+- ecall 指令，从 U-mode 切换到 S-mode； 其实也并不是直接切换到 S-mode，而是先切换到 M-mode，因为 M-mode的系统调用被委托给了 S-mode（可以查看kernel/start.c），所以由 S-mode 来处理；
 - 时钟中断，xv6中时钟中断在 M-mode 中，由每个 cpu 定时产生，所以这里是 U-mode 切换到 M-mode 。
-- 软件中断，同样，U-mode切换到委托的 S-mode。 xv6中的软件中断只是由 时钟中断 产生的。
-- 设备中断，Uart 和 virtio 等，暂不说明；
+- 软件中断，同样，U-mode切换到M-mode，委托到S-mode。 xv6中的软件中断只是由时钟中断 产生的。
+- 设备中断，Uart 和 virtio等；
 
 ## 2. 高级别向低级别切换
 
-- mret，该指令执行后会设置权限级别=mstatus.MPP,mstatus.MIE = mstatus.MPIE; mstatus.MPIE = 1;pc = mepc;
-- sret, 同上，mstatus替换为sstatus即可。
+- mret指令，可以实现向S-mode或者U-mode切换？，需要设置mstatus和mepc寄存器。该指令执行后会设置权限级别=mstatus.MPP,mstatus.MIE = mstatus.MPIE; mstatus.MPIE = 1；
+- sret指令，可以实现想U-mode切换，需要设置sstatus寄存器和sepc寄存器。
 
 # 0x02 时钟中断的实现
 
@@ -170,7 +170,7 @@ scratch数组包含5个元素：
 168   wakeup(&ticks); // wakeup 这个比较复杂，后面再说
 169   release(&tickslock);
 170 }
-``` 
+```
 
 对于这里软件中断（或者说时钟中断）最终devintr返回值是2，通过判断返回值，再进行时钟中断的相关动作，其实主要就是yield放弃CPU。
 
