@@ -1,0 +1,60 @@
+#!/bin/bash
+# Version: 2.7
+# Date: 2023-8-31
+# 
+
+DATAFILE="$0.data"
+EXPFILE=$(/usr/bin/mktemp)
+
+if [ ! -f $DATAFILE ];then
+	echo "#hostname:username:password:description:" > $DATAFILE;
+fi
+
+echo_help() {
+	echo ""
+	echo "Usage:"
+	echo " List the host in datafile."
+	echo " -ID [cmd]	Connect the host list with line id."
+	echo " -e		Edit the datafile with vi."
+	echo ""
+}
+
+## no args , list all hosts
+if [ ! $1 ] 
+then
+	echo -e "No\tHostname\tUser\tDescriptions..."
+	grep -vE "^#|^$" $DATAFILE| awk 'BEGIN{FS=":";OFS="\t"} {print NR,$1,substr($2,1,7),$4}'
+	exit
+fi
+
+## -e  edit the data file
+if [ $1 == '-e' ]
+then
+	vim $DATAFILE
+	exit
+fi
+
+## connect to the host and exec CMD
+if [[ $1 -gt 0 && $1 -le $(grep -vE "^#|^$" $DATAFILE |wc -l) ]]
+then
+	host_line=`grep -vE "^#|^$" $DATAFILE| sed -n "$1p"`
+	read HOST USERNAME PASSWORD <<< "$(echo $host_line|awk -F: '{ print $1,$2,$3}')"
+	CMD=$2
+	cat >$EXPFILE <<-EOF
+        spawn /usr/bin/ssh $USERNAME@$HOST $CMD
+        expect {
+        "*yes/no*" { send "yes\r"; exp_continue }
+        "*assword*" { send "$PASSWORD\r" }
+        }
+        interact
+        # expect eof
+EOF
+	expect -f $EXPFILE
+	rm -f $EXPFILE
+	exit
+else
+	echo "Error: line id is wrong."
+fi
+
+## wrong input, echo help
+echo_help
