@@ -1,0 +1,44 @@
+FS7200-make-vdisk-map.txt
+
+FS7200 命令行：
+https://www.ibm.com/docs/en/flashsystem-7x00/8.3.x?topic=7200-command-line-interface
+
+
+创建LUN命令：
+https://www.ibm.com/docs/en/flashsystem-7x00/8.3.x?topic=commands-mkvdisk
+mkvdisk -blocksize 512 -iogrp io_grp0 -mdiskgrp 0 -name ytest-2 -size 20 -unit gb
+
+
+映射LUN命令：
+
+https://www.ibm.com/docs/en/flashsystem-7x00/8.3.x?topic=commands-mkvdiskhostmap
+mkvdiskhostmap -host host1  5
+
+
+AIX 创建和修改ip地址命令：
+
+mktcpip -h'localhost' -a'10.152.107.66' -m'255.255.0.0' -i'en0' -g'10.152.11.1'
+
+chdev -l 'en0' -a netaddr='10.152.107.67' -a state='up' 
+
+
+
+收集测试性能脚本：
+mkdir -p /test
+cd /test
+nmon -tAdfKLMNOPVY^ -s 5 -c 1200
+iostat -RDTl 1 > iostat.out.`date +%F-%H-%M`  &
+vmstat -ItWw 1 > vmstat.out.`date +%F-%H-%M`  &
+mkdir -p perfdata; cd perfdata; perfpmr.sh 60 
+
+
+修改ASM磁盘权限：
+a=101
+for i in $(lspv |grep -v rootvg |awk '{print$1}') ;
+do
+rendev -l $i -n hdisk$a
+chdev -l hdisk$a -a queue_depth=256 -a reserve_policy=no_reserve -a pv=yes;
+chown grid:dba /dev/*hdisk$a; 
+chmod 660 /dev/*hdisk$a;
+let a=$a+1
+done

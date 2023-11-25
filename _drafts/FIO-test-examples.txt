@@ -1,0 +1,179 @@
+FIO-test-examples.txt
+
+
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=write -size=10G -filename=test -name="Max IOPS" -iodepth=4 -runtime=60
+
+fio -ioengine=libaio -bs=4m -direct=1 -thread -rw=write -size=10G -filename=test -name="Max throughput" -iodepth=4 -runtime=60
+
+
+[mytest]
+filename=/home/fio/fioTest
+ioengine=libaio
+direct=1
+thread
+rw=randread
+bs=4k
+size=10g
+numjobs=4
+runtime=30
+group_reporting 
+
+
+https://fio.readthedocs.io/en/latest/fio_doc.html#terse-output
+
+https://www.cnblogs.com/qa-freeroad/p/13431131.html
+
+1）测试变量：
+
+    bs大小：（4k，16k，64k，1m)
+    读写模式：（read，write，rw，randread，randwrite，randrw）
+    使用libaio异步引擎，iodepth队列长度为128。
+    运行时间为60s
+
+第一种：4K，顺序写
+
+fio --randrepeat=1 --ioengine=libaio --direct=1 --name=ccg_fio --iodepth=128 --numjobs=16 --size=1g --bs=4k --group_reporting=1 --readwrite=write --time_based=1 --runtime=60 --sync=0 --fdatasync=0 --filename=/mnt/ccg/4k_write
+
+[点击并拖拽以移动]
+
+第二种：16K，顺序读
+
+fio --randrepeat=1 --ioengine=libaio --direct=1 --name=ccg_fio --iodepth=128 --numjobs=16 --size=1g --bs=16k --group_reporting=1 --readwrite=read --time_based=1 --runtime=60 --sync=0 --fdatasync=0 --filename=/mnt/ccg/16k_read
+
+[点击并拖拽以移动]
+
+第三种：16K，混合读写，70%读，30%写
+
+fio --randrepeat=1 --ioengine=libaio --direct=1 --name=ccg_fio --iodepth=128 --numjobs=16 --size=1g --bs=16k --group_reporting=1 --readwrite=rw  -rwmixread=70 --time_based=1 --runtime=60 --sync=0 --fdatasync=0 --filename=/mnt/ccg/16k_rw
+
+[点击并拖拽以移动]
+
+第四种：64k，随机写
+
+fio --randrepeat=1 --ioengine=libaio --direct=1 --name=ccg_fio --iodepth=128 --numjobs=16 --size=1g --bs=64k --group_reporting=1 --readwrite=randwrite  --time_based=1 --runtime=60 --sync=0 --fdatasync=0 --filename=/mnt/ccg/64k_randwrite
+
+[点击并拖拽以移动]
+
+第五种：1m，随机读
+
+fio --randrepeat=1 --ioengine=libaio --direct=1 --name=ccg_fio --iodepth=128 --numjobs=16 --size=1g --bs=1m --group_reporting=1 --readwrite=randread  --time_based=1 --runtime=60 --sync=0 --fdatasync=0 --filename=/mnt/ccg/1m_randread
+
+[点击并拖拽以移动]
+
+第六种：1m，随机读写，70%读，30%写
+
+fio --randrepeat=1 --ioengine=libaio --direct=1 --name=ccg_fio --iodepth=128 --numjobs=16 --size=1g --bs=1m --group_reporting=1 --readwrite=randrw  -rwmixread=70  --time_based=1 --runtime=60 --sync=0 --fdatasync=0 --filename=/mnt/ccg/1m_randrw
+
+[点击并拖拽以移动]
+
+2）执行测试
+
+root@client:/mnt/ccg# fio --randrepeat=1 --ioengine=libaio --direct=1 --name=ccg_fio --iodepth=128 --numjobs=16 --size=1g --bs=4k --group_reporting=1 --readwrite=write --time_based=1 --runtime=60 --sync=0 --fdatasync=0 --filename=/mnt/ccg/4k_write
+
+
+
+
+
+#!/bin/bash
+
+for RW in read write randread randwrite
+do
+        for BS in 4k 16k 64k 1m 4m
+        do
+                echo Testing ${RW} ${BS} ...
+
+                fio -ioengine=libaio \
+                    -bs=${BS} \
+                    -direct=1 \
+                    -thread \
+                    -rw=${RW} \
+                    -size=10G \
+                    -filename="${RW}-${BS}.file" \
+                    -name="${RW}-${BS}" \
+                    -iodepth=4 \
+                    --time_based=1 \
+                    -runtime=30 > ${RW}-${BS}.log
+
+                rm -rf "${RW}-${BS}.file"
+        done
+done
+
+
+
+
+### download fio 3.33 
+wget https://git.kernel.dk/cgit/fio/snapshot/fio-3.33.tar.gz
+tar -xf fio-3.33.tar.gz
+cd fio-3.33
+./configure  && make 
+
+### test
+Use ./fio-3.33/fio
+
+
+
+yum install sysstat
+iostat -d /dev/sdb -x -t 1
+
+
+Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+vda               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00    0.00    0.00   0.00   0.00
+scd0              0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00    0.00    0.00   0.00   0.00
+
+
+rrqm/s：  每秒进行 merge 的读操作数目.即 delta(rmerge)/s
+
+wrqm/s： 每秒进行 merge 的写操作数目.即 delta(wmerge)/s
+
+r/s：  每秒完成的读 I/O 设备次数.即 delta(rio)/s
+
+w/s：  每秒完成的写 I/O 设备次数.即 delta(wio)/s
+
+rsec/s：  每秒读扇区数.即 delta(rsect)/s
+
+wsec/s： 每秒写扇区数.即 delta(wsect)/s
+
+rkB/s：  每秒读K字节数.是 rsect/s 的一半,因为每扇区大小为512字节.(需要计算)
+
+wkB/s：  每秒写K字节数.是 wsect/s 的一半.(需要计算)
+
+avgrq-sz：平均每次设备I/O操作的数据大小 (扇区).delta(rsect+wsect)/delta(rio+wio)
+
+avgqu-sz：平均I/O队列长度.即 delta(aveq)/s/1000 (因为aveq的单位为毫秒).
+
+await：  平均每次设备I/O操作的等待时间 (毫秒).即 delta(ruse+wuse)/delta(rio+wio)
+
+svctm： 平均每次设备I/O操作的服务时间 (毫秒).即 delta(use)/delta(rio+wio)
+
+%util： 一秒中有百分之多少的时间用于 I/O 操作,或者说一秒中有多少时间 I/O 队列是非空的，即 delta(use)/s/1000 (因为use的单位为毫秒)
+如果 %util 接近 100%，说明产生的I/O请求太多，I/O系统已经满负荷，该磁盘可能存在瓶颈。
+idle小于70% IO压力就较大了，一般读取速度有较多的wait。
+同时可以结合vmstat 查看查看b参数(等待资源的进程数)和wa参数(IO等待所占用的CPU时间的百分比，高过30%时IO压力高)。
+
+
+
+
+
+
+====== vdbench ==== 
+
+## download vdbench 
+
+unzip vdbench
+
+./vdbench -t
+
+need java 
+
+
+## scripts for filesystem
+
+fsd=fsd1,anchor=/dir,depth=1,width=1,files=10000,size=8k
+
+fwd=fwd1,fsd=fsd1,operation=read,threads=16
+
+rd=rd1,fwd=fwd*,fwdrate=100,format=yes,elapsed=5,interval=1
+
+
+### ./vdbench -f example7
+

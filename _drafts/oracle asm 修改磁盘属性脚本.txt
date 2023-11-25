@@ -1,0 +1,29 @@
+oracle asm 修改磁盘属性脚本.txt
+
+
+a=101
+for i in $(lspv |grep -v rootvg |awk '{print$1}') ;
+do
+rendev -l $i -n hdisk$a
+chdev -l hdisk$a -a queue_depth=256 -a reserve_policy=no_reserve -a pv=yes;
+chown grid:dba /dev/*hdisk$a; 
+chmod 660 /dev/*hdisk$a;
+let a=$a+1
+done
+
+
+###### 使用 pvid 修改hdisk name 并修改属性  for DBFILE
+a=102
+for j in \
+00ca1d9731a1bb2c \
+00ca1d9731a1bb83 \
+00ca1d9731a1bbea \
+00ca1d9731a1bc3c  ;
+do
+i=$(lspv|grep $j|awk '{print$1}')
+rendev -l $i -n hdisk$a
+chdev -l hdisk$a -a queue_depth=256 -a reserve_policy=no_reserve -a pv=yes;
+chown grid:dba /dev/*hdisk$a; 
+chmod 660 /dev/*hdisk$a;
+let a=$a+1
+done

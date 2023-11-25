@@ -1,0 +1,33 @@
+AIX-ACL-config.txt
+
+
+https://www.ibm.com/docs/en/aix/7.2?topic=system-aixc-access-control-list
+
+######################### ACL extended permissions 配置 #######
+
+bash-4.2# export EDITOR=/usr/bin/vi
+bash-4.2# acledit /usr/bin/rm
+Should the modified ACL be applied? (yes) or (no) yes
+bash-4.2# aclget /usr/bin/rm
+*
+* ACL_type   AIXC
+*
+attributes:
+base permissions
+    owner(bin):  r-x
+    group(bin):  r-x
+    others:  r-x
+extended permissions
+    enabled
+    deny     --x     u:oracle
+
+
+###########################  测试 ##############################
+bash-4.2# su - oracle
+bash-4.2$ touch 1.txt
+bash-4.2$ ls -l 1.txt
+-rw-rw-r--    1 oracle   dba               0 Jun 08 10:38 1.txt
+bash-4.2$ rm 1.txt
+bash: /usr/bin/rm: The file access permissions do not allow the specified action.
+
+

@@ -1,0 +1,45 @@
+AIX7.1-编译安装-openssh.TXT
+
+1,DWONLOAD
+
+下载openssh-8.8p1
+https://mirrors.aliyun.com/pub/OpenBSD/OpenSSH/portable/openssh-8.8p1.tar.gz?spm=a2c6h.25603864.0.0.686840adss9viU
+
+2,安装编译环境
+
+gcc8
+zlib-devel
+
+
+3，编译选项和安装
+
+直接安装替换掉现有openssh.base的文件，可以运行，但是不能用lslpp查看版本
+CC=/opt/freeware/bin/gcc-8 CPP=/opt/freeware/bin/cpp-8  ./configure --prefix=/usr/ --sysconfdir=/etc/ssh/
+make -j4
+make install
+stopsrc -g ssh; startsrc -g ssh
+
+直接安装不太好吧，做成installp的安装包试试
+bash-4.2# mkdir /home/soft/openssh/
+bash-4.2# CC=/opt/freeware/bin/gcc-8 CPP=/opt/freeware/bin/cpp-8  ./configure --prefix=/home/soft/openssh/
+bash-4.2# make -j4 && make install
+
+mkinstallp
+
+
+
+4，其他
+
+1）Zlib 1.1.4 or 1.2.1.2 or greater (earlier 1.2.x versions have problems):http://www.gzip.org/zlib
+
+2）libcrypto from either of LibreSSL or OpenSSL.  Building without libcrypto
+is supported but severely restricts the available ciphers and algorithms.
+ - LibreSSL (https://www.libressl.org/)
+ - OpenSSL (https://www.openssl.org) with any of the following versions:
+   - 1.0.x >= 1.0.1 or 1.1.0 >= 1.1.0g or any 1.1.1
+
+
+5，完成后：
+
+bash-4.2# ssh -V
+OpenSSH_8.8p1, OpenSSL 1.0.1e 11 Feb 2013

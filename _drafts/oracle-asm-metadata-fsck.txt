@@ -1,0 +1,24 @@
+oracle-asm-metadata-fsck.txt
+
+
+n1# /oracle/11.2.0/grid/bin/kfed  find  aun=0 aus=4194304  dev=/dev/rhdisk4 |head
+Block 0 has type 1     --- type 1 是磁盘头
+Block 1 has type 2
+Block 2 has type 3
+Block 3 has type 3
+Block 4 has type 3
+Block 5 has type 3
+Block 6 has type 3
+Block 7 has type 3
+
+
+修复metadata：
+n1# /oracle/11.2.0/grid/bin/kfed repair aus=4194304  dev=/dev/rhdisk4
+aus如果不是默认的，需要指定，这里是4M
+
+
+#### 损坏的metadata
+n1# /oracle/11.2.0/grid/bin/kfed  read  aun=0 blkn=0  dev=/dev/rhdisk3 |grep type
+kfbh.type:                          212 ; 0x002: *** Unknown Enum ***
+KFED-00322: file not found; arguments: [kfbtTraverseBlock] [Invalid OSM block type] [] [212]
+

@@ -1,0 +1,40 @@
+# 升级步骤：
+
+停止该节点oracle 服务
+bash-4.2# /oracle/11.2.0/grid/bin/crsctl stop crs
+bash-4.2# ps -ef |grep ora
+
+安装java8，使用smit installp操作也行
+bash-4.2# installp -acgXYd /backupnode1/java8/  Java8.jre Java8.sdk Java8_64.jre Java8_64.sdk
+
+全部更新，或使用smit update_all
+bash-4.2# install_all_updates -d /backupnode1/AIX-71000508-2114-fixpacks/ -Y
+
+# 查看某个TL版本缺少的文件集，
+oslevel -rl 7100-05
+
+我之前测试的时候sysmgt.cfgassist和java7_64，没有自动安装好，再手动选择安装一下：
+
+安装 sysmgt.cfgassist
+bash-4.2# installp -acgXYd /backupnode1/AIX-71000508-2114-fixpacks/ sysmgt.cfgassist
+
+安装java7_64  
+smit installp
+
+如果root用户不能ssh登录，完成后需要修改一下ssh参数：
+bash-4.2# cat /etc/ssh/sshd_config|grep -vE "^$|^#" |grep RootLogin
+PermitRootLogin yes
+bash-4.2# stopsrc -g ssh;startsrc -g ssh
+
+
+
+其他：
+
+#查看每个TL版本的文件集是否完整：
+instfix -i|grep ML
+oslevel -sq
+
+
+### 这个可以不安装
+安装 DirectorCommonAgent    DirectorPlatformAgent
+bash-4.2# installp -acgXYd /backupnode1/Director DirectorCommonAgent DirectorPlatformAgent
