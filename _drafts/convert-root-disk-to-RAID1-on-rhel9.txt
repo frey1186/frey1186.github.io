@@ -1,0 +1,372 @@
+Keyboard-interactive authentication prompts from server:
+End of keyboard-interactive prompts from server
+    ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©´
+    ©¦               ? MobaXterm Professional Edition v23.0 ?               ©¦
+    ©¦               (SSH client, X server and network tools)               ©¦
+    ©¦                                                                      ©¦
+    ©¦ ? SSH session to root@192.168.163.129                                ©¦
+    ©¦   ? Direct SSH      :  ?                                             ©¦
+    ©¦   ? SSH compression :  ?                                             ©¦
+    ©¦   ? SSH-browser     :  ?                                             ©¦
+    ©¦   ? X11-forwarding  :  ?  (disabled or not supported by server)      ©¦
+    ©¦                                                                      ©¦
+    ©¦ ? For more info, ctrl+click on help or visit our website.            ©¦
+    ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¼
+
+Register this system with Red Hat Insights: insights-client --register
+Create an account or view all your systems at https://red.ht/insights-dashboard
+Last login: Mon Jan  1 14:49:01 2024 from 192.168.163.1
+[root@client01 ~]#
+[root@client01 ~]# hostname
+client01.ipa.frey.cn
+[root@client01 ~]# lsblk
+NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sda             8:0    0   20G  0 disk
+©À©¤sda1          8:1    0    1G  0 part /boot
+©¸©¤sda2          8:2    0   19G  0 part
+  ©À©¤rhel-root 253:0    0   17G  0 lvm  /
+  ©¸©¤rhel-swap 253:1    0    2G  0 lvm  [SWAP]
+sdb             8:16   0   20G  0 disk
+sr0            11:0    1  8.9G  0 rom
+[root@client01 ~]# 
+[root@client01 ~]# mount /dev/sr0 /mnt/
+mount: /mnt: WARNING: source write-protected, mounted read-only.
+[root@client01 ~]# yum -y install mdadm
+[root@client01 ~]# parted /dev/sda u s p
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 41943040s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start     End        Size       Type     File system  Flags
+ 1      2048s     2099199s   2097152s   primary  xfs          boot
+ 2      2099200s  41943039s  39843840s  primary               lvm
+
+
+[root@client01 ~]# parted /dev/sdb mklabel msdos
+Information: You may need to update /etc/fstab.
+
+[root@client01 ~]# parted /dev/sdb mkpart primary 2048s     2099199s
+Information: You may need to update /etc/fstab.
+
+[root@client01 ~]# parted /dev/sdb mkpart primary 2099200s  41943039s
+Information: You may need to update /etc/fstab.
+
+[root@client01 ~]# parted /dev/sdb set 1 raid on
+Information: You may need to update /etc/fstab.
+
+[root@client01 ~]# parted /dev/sdb set 2 raid on
+Information: You may need to update /etc/fstab.
+
+[root@client01 ~]# parted /dev/sda set 1 raid on
+Information: You may need to update /etc/fstab.
+
+[root@client01 ~]# parted /dev/sda set 2 raid on
+Information: You may need to update /etc/fstab.
+
+[root@client01 ~]# mdadm --create /dev/md0 --level=1 --raid-disks=2 missing /dev/sdb1 --metadata=1.0
+mdadm: array /dev/md0 started.
+[root@client01 ~]# mkdir /tmp/md0
+[root@client01 ~]# mkfs.xfs /dev/md0
+meta-data=/dev/md0               isize=512    agcount=4, agsize=65532 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=0
+         =                       reflink=1    bigtime=1 inobtcount=1
+data     =                       bsize=4096   blocks=262128, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=1566, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+[root@client01 ~]# mount /dev/md0 /tmp/md0/
+[root@client01 ~]# yum -y install rsync
+[root@client01 ~]# rsync -a /boot/ /tmp/md0/
+[root@client01 ~]# sync
+[root@client01 ~]# umount /tmp/md0
+[root@client01 ~]# rmdir /tmp/md0
+[root@client01 ~]# umount /boot
+[root@client01 ~]# mount /dev/md0 /boot/
+[root@client01 ~]# mdadm /dev/md0 -a /dev/sda1
+mdadm: added /dev/sda1
+[root@client01 ~]# mdadm -D /dev/md0
+/dev/md0:
+           Version : 1.0
+     Creation Time : Mon Jan 15 18:14:01 2024
+        Raid Level : raid1
+        Array Size : 1048512 (1023.94 MiB 1073.68 MB)
+     Used Dev Size : 1048512 (1023.94 MiB 1073.68 MB)
+      Raid Devices : 2
+     Total Devices : 2
+       Persistence : Superblock is persistent
+
+       Update Time : Mon Jan 15 18:16:38 2024
+             State : clean
+    Active Devices : 2
+   Working Devices : 2
+    Failed Devices : 0
+     Spare Devices : 0
+
+Consistency Policy : resync
+
+              Name : client01.ipa.frey.cn:0  (local to host client01.ipa.frey.cn)
+              UUID : 445f4c19:861b7f4a:e19bf143:7c01afcb
+            Events : 33
+
+    Number   Major   Minor   RaidDevice State
+       2       8        1        0      active sync   /dev/sda1
+       1       8       17        1      active sync   /dev/sdb1
+[root@client01 ~]# lsblk
+NAME          MAJ:MIN RM    SIZE RO TYPE  MOUNTPOINTS
+sda             8:0    0     20G  0 disk
+©À©¤sda1          8:1    0      1G  0 part
+©¦ ©¸©¤md0         9:0    0 1023.9M  0 raid1 /boot
+©¸©¤sda2          8:2    0     19G  0 part
+  ©À©¤rhel-root 253:0    0     17G  0 lvm   /
+  ©¸©¤rhel-swap 253:1    0      2G  0 lvm   [SWAP]
+sdb             8:16   0     20G  0 disk
+©À©¤sdb1          8:17   0      1G  0 part
+©¦ ©¸©¤md0         9:0    0 1023.9M  0 raid1 /boot
+©¸©¤sdb2          8:18   0     19G  0 part
+sr0            11:0    1    8.9G  0 rom   /mnt
+[root@client01 ~]# parted /dev/sda u s p
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sda: 41943040s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start     End        Size       Type     File system  Flags
+ 1      2048s     2099199s   2097152s   primary  xfs          boot, raid
+ 2      2099200s  41943039s  39843840s  primary               raid
+
+[root@client01 ~]# parted /dev/sdb u s p
+Model: VMware, VMware Virtual S (scsi)
+Disk /dev/sdb: 41943040s
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start     End        Size       Type     File system  Flags
+ 1      2048s     2099199s   2097152s   primary  xfs          raid
+ 2      2099200s  41943039s  39843840s  primary               raid
+
+[root@client01 ~]# mdadm -D /dev/md0
+/dev/md0:
+           Version : 1.0
+     Creation Time : Mon Jan 15 18:14:01 2024
+        Raid Level : raid1
+        Array Size : 1048512 (1023.94 MiB 1073.68 MB)
+     Used Dev Size : 1048512 (1023.94 MiB 1073.68 MB)
+      Raid Devices : 2
+     Total Devices : 2
+       Persistence : Superblock is persistent
+
+       Update Time : Mon Jan 15 18:16:38 2024
+             State : clean
+    Active Devices : 2
+   Working Devices : 2
+    Failed Devices : 0
+     Spare Devices : 0
+
+Consistency Policy : resync
+
+              Name : client01.ipa.frey.cn:0  (local to host client01.ipa.frey.cn)
+              UUID : 445f4c19:861b7f4a:e19bf143:7c01afcb
+            Events : 33
+
+    Number   Major   Minor   RaidDevice State
+       2       8        1        0      active sync   /dev/sda1
+       1       8       17        1      active sync   /dev/sdb1
+[root@client01 ~]# blkid |grep md0
+/dev/md0: UUID="9848f49a-323b-4832-a73e-594d0d1a74b5" TYPE="xfs"
+[root@client01 ~]# vim /etc/fstab
+[root@client01 ~]# cat /etc/fstab
+
+#
+# /etc/fstab
+# Created by anaconda on Fri Dec 15 10:11:47 2023
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+/dev/mapper/rhel-root   /                       xfs     defaults        0 0
+#UUID=d89100e8-97de-48cb-88a5-d7b42eb0ed04 /boot                   xfs     defaults        0 0
+UUID=9848f49a-323b-4832-a73e-594d0d1a74b5 /boot                   xfs     defaults        0 0
+/dev/mapper/rhel-swap   none                    swap    defaults        0 0
+[root@client01 ~]# mdadm --create /dev/md1 --level=1 --raid-disks=2 missing /dev/sdb2 --metadata=1.0
+mdadm: array /dev/md1 started.
+[root@client01 ~]# vgs
+  VG   #PV #LV #SN Attr   VSize   VFree
+  rhel   1   2   0 wz--n- <19.00g    0
+[root@client01 ~]# vgextend rhel /dev/md1
+  Physical volume "/dev/md1" successfully created.
+  Volume group "rhel" successfully extended
+[root@client01 ~]# vgs
+  VG   #PV #LV #SN Attr   VSize  VFree
+  rhel   2   2   0 wz--n- 37.99g <19.00g
+[root@client01 ~]# pvs
+  PV         VG   Fmt  Attr PSize   PFree
+  /dev/md1   rhel lvm2 a--  <19.00g <19.00g
+  /dev/sda2  rhel lvm2 a--  <19.00g      0
+[root@client01 ~]# pvmove /dev/sda2 /dev/md1
+  /dev/sda2: Moved: 0.70%
+  /dev/sda2: Moved: 10.53%
+  /dev/sda2: Moved: 41.44%
+  /dev/sda2: Moved: 58.22%
+  /dev/sda2: Moved: 83.55%
+  /dev/sda2: Moved: 100.00%
+
+
+[root@client01 ~]#
+[root@client01 ~]#
+[root@client01 ~]# vgreduce rhel /dev/sda2
+  Removed "/dev/sda2" from volume group "rhel"
+[root@client01 ~]# pvremove /dev/sda2
+  Labels on physical volume "/dev/sda2" successfully wiped.
+[root@client01 ~]# vi /etc/lvm/lvm.conf
+[root@client01 ~]# mdadm /dev/md1 -a /dev/sda2
+mdadm: added /dev/sda2
+[root@client01 ~]# mdadm -D /dev/md1
+/dev/md1:
+           Version : 1.0
+     Creation Time : Mon Jan 15 18:19:58 2024
+        Raid Level : raid1
+        Array Size : 19921792 (19.00 GiB 20.40 GB)
+     Used Dev Size : 19921792 (19.00 GiB 20.40 GB)
+      Raid Devices : 2
+     Total Devices : 2
+       Persistence : Superblock is persistent
+
+       Update Time : Mon Jan 15 18:24:19 2024
+             State : clean, degraded, recovering
+    Active Devices : 1
+   Working Devices : 2
+    Failed Devices : 0
+     Spare Devices : 1
+
+Consistency Policy : resync
+
+    Rebuild Status : 8% complete
+
+              Name : client01.ipa.frey.cn:1  (local to host client01.ipa.frey.cn)
+              UUID : 3dd5d419:a8614feb:b13cc505:7fbda579
+            Events : 55
+
+    Number   Major   Minor   RaidDevice State
+       2       8        2        0      spare rebuilding   /dev/sda2
+       1       8       18        1      active sync   /dev/sdb2
+[root@client01 ~]# mdadm -D /dev/md1
+/dev/md1:
+           Version : 1.0
+     Creation Time : Mon Jan 15 18:19:58 2024
+        Raid Level : raid1
+        Array Size : 19921792 (19.00 GiB 20.40 GB)
+     Used Dev Size : 19921792 (19.00 GiB 20.40 GB)
+      Raid Devices : 2
+     Total Devices : 2
+       Persistence : Superblock is persistent
+
+       Update Time : Mon Jan 15 18:24:19 2024
+             State : clean, degraded, recovering
+    Active Devices : 1
+   Working Devices : 2
+    Failed Devices : 0
+     Spare Devices : 1
+
+Consistency Policy : resync
+
+    Rebuild Status : 11% complete
+
+              Name : client01.ipa.frey.cn:1  (local to host client01.ipa.frey.cn)
+              UUID : 3dd5d419:a8614feb:b13cc505:7fbda579
+            Events : 55
+
+    Number   Major   Minor   RaidDevice State
+       2       8        2        0      spare rebuilding   /dev/sda2
+       1       8       18        1      active sync   /dev/sdb2
+[root@client01 ~]# mdadm -D /dev/md1
+/dev/md1:
+           Version : 1.0
+     Creation Time : Mon Jan 15 18:19:58 2024
+        Raid Level : raid1
+        Array Size : 19921792 (19.00 GiB 20.40 GB)
+     Used Dev Size : 19921792 (19.00 GiB 20.40 GB)
+      Raid Devices : 2
+     Total Devices : 2
+       Persistence : Superblock is persistent
+
+       Update Time : Mon Jan 15 18:24:25 2024
+             State : clean, degraded, recovering
+    Active Devices : 1
+   Working Devices : 2
+    Failed Devices : 0
+     Spare Devices : 1
+
+Consistency Policy : resync
+
+    Rebuild Status : 13% complete
+
+              Name : client01.ipa.frey.cn:1  (local to host client01.ipa.frey.cn)
+              UUID : 3dd5d419:a8614feb:b13cc505:7fbda579
+            Events : 56
+
+    Number   Major   Minor   RaidDevice State
+       2       8        2        0      spare rebuilding   /dev/sda2
+       1       8       18        1      active sync   /dev/sdb2
+[root@client01 ~]# mdadm --examine --scan > /etc/mdadm.conf
+[root@client01 ~]#
+[root@client01 ~]# mdadm -D /dev/md1 |grep UUID
+              UUID : 3dd5d419:a8614feb:b13cc505:7fbda579
+[root@client01 ~]# mdadm -D /dev/md0 |grep UUID
+              UUID : 445f4c19:861b7f4a:e19bf143:7c01afcb
+[root@client01 ~]# grep GRUB_CMD /etc/default/grub
+GRUB_CMDLINE_LINUX="resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap"
+[root@client01 ~]# vim /etc/default/grub
+[root@client01 ~]# grep GRUB_CMD /etc/default/grub
+GRUB_CMDLINE_LINUX="rd.md.uuid=445f4c19:861b7f4a:e19bf143:7c01afcb rd.md.uuid=3dd5d419:a8614feb:b13cc505:7fbda579 resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap"
+[root@client01 ~]# grub2-mk
+grub2-mkconfig         grub2-mkimage          grub2-mkpasswd-pbkdf2  grub2-mkrelpath
+[root@client01 ~]# grub2-mk
+grub2-mkconfig         grub2-mkimage          grub2-mkpasswd-pbkdf2  grub2-mkrelpath
+[root@client01 ~]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+Adding boot menu entry for UEFI Firmware Settings ...
+done
+[root@client01 ~]# cat /boot/grub2/device.map
+# this device map was generated by anaconda
+(hd0)      /dev/sda
+[root@client01 ~]# vim /boot/grub2/device.map
+[root@client01 ~]# cat /boot/grub2/device.map
+(hd0)      /dev/sda
+(hd1)      /dev/sdb
+[root@client01 ~]# grub2-install /dev/sda
+Installing for i386-pc platform.
+Installation finished. No error reported.
+[root@client01 ~]# grub2-install /dev/sdb
+Installing for i386-pc platform.
+Installation finished. No error reported.
+[root@client01 ~]# cp /boot/initramfs-
+initramfs-0-rescue-01deaf32a8574ddcb1771f7db0a7e4bc.img  initramfs-5.14.0-284.11.1.el9_2.x86_64.img
+[root@client01 ~]# cp /boot/initramfs-5.14.0-284.11.1.el9_2.x86_64.img /boot/initramfs-5.14.0-284.11.1.el9_2.x86_64.img.bak20240115
+[root@client01 ~]# dracut -f --mdadmconf
+[root@client01 ~]#
+[root@client01 ~]# ls -l /boot/initramfs-*
+-rw-------. 1 root root 77615715 Dec 15 18:19 /boot/initramfs-0-rescue-01deaf32a8574ddcb1771f7db0a7e4bc.img
+-rw-------. 1 root root 35203942 Jan 15 18:32 /boot/initramfs-5.14.0-284.11.1.el9_2.x86_64.img
+-rw-------. 1 root root 36528272 Jan 15 18:31 /boot/initramfs-5.14.0-284.11.1.el9_2.x86_64.img.bak20240115
+[root@client01 ~]# date
+Mon Jan 15 06:32:51 PM CST 2024
+[root@client01 ~]# systemctl reboot
+[root@client01 ~]#
+Remote side unexpectedly closed network connection
+
+©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+
+Session stopped
+    - Press <Return> to exit tab
+    - Press R to restart session
+    - Press S to save terminal output to file
