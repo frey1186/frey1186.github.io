@@ -16,6 +16,11 @@
   font-weight: bold;
 }
 
+.post-content h1,h2,h3,h4,p{
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 /* text-center */
 .text-center h1{
 	font-size: 25px;
@@ -24,5 +29,11 @@
 /* font size for code */
 pre.highlight {
     font-size: 0.85rem;
+    border: 1px solid rgba(0, 16, 47, 0.5);
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
+.card{
+    box-shadow: rgba(30, 41, 59, 0.63) 0 2px 4px 0;
+}
