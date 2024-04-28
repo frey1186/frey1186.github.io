@@ -184,5 +184,17 @@
     <!-- Tabler Core -->
     <script src="/custom/default_files/tabler.js" defer="defer"></script>
     <script src="/custom/default_files/demo.js" defer="defer"></script>
-  
-</body></html>
+    <script>
+	// replace c to span
+	var x = document.querySelectorAll('c')
+	var i;
+	for (i = 0; i < x.length; i++) {
+		var obj_span = document.createElement('span')
+		obj_span.innerHTML = x[i].innerHTML
+		obj_span.classList.add("badge")
+		obj_span.classList.add("bg-azure")
+		x[i].replaceWith(obj_span)
+	}
+    </script>
+
+  </body></html>
