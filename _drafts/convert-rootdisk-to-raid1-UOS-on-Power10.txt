@@ -1,0 +1,268 @@
+Pre-authentication banner message from server:
+| UnionTech OS Server 20 Enterprise-C
+End of banner message from server
+    ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©´
+    ©¦               ? MobaXterm Professional Edition v23.0 ?               ©¦
+    ©¦               (SSH client, X server and network tools)               ©¦
+    ©¦                                                                      ©¦
+    ©¦ ? SSH session to root@10.128.8.25                                    ©¦
+    ©¦   ? Direct SSH      :  ?                                             ©¦
+    ©¦   ? SSH compression :  ?                                             ©¦
+    ©¦   ? SSH-browser     :  ?                                             ©¦
+    ©¦   ? X11-forwarding  :  ?  (disabled or not supported by server)      ©¦
+    ©¦                                                                      ©¦
+    ©¦ ? For more info, ctrl+click on help or visit our website.            ©¦
+    ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¼
+
+Activate the web console with: systemctl enable --now cockpit.socket
+
+Last login: Fri Jan 19 12:28:38 2024
+[root@localhost ~]#
+[root@localhost ~]#
+[root@localhost ~]#
+[root@localhost ~]# lsblk
+NAME         MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda            8:0    0   20G  0 disk
+sdb            8:16   0   20G  0 disk
+©À©¤sdb1         8:17   0    4M  0 part
+©À©¤sdb2         8:18   0    1G  0 part /boot
+©¸©¤sdb3         8:19   0   19G  0 part
+  ©À©¤uos-root 253:0    0   17G  0 lvm  /
+  ©¸©¤uos-swap 253:1    0    2G  0 lvm  [SWAP]
+sr0           11:0    1  6.9G  0 rom
+[root@localhost ~]# parted /dev/sdb u s p
+Model: AIX VDASD (scsi)
+Disk /dev/sdb: 5242880s
+Sector size (logical/physical): 4096B/4096B
+Partition Table: msdos
+Disk Flags:
+
+Number  Start    End       Size      Type     File system  Flags
+ 1      256s     1279s     1024s     primary               boot, prep
+ 2      1280s    263423s   262144s   primary  ext4
+ 3      263424s  5242879s  4979456s  primary               lvm
+
+[root@localhost ~]# parted /dev/sda mklabel msdos
+Information: You may need to update /etc/fstab.
+
+[root@localhost ~]# parted /dev/sda mkpart primary 256s     1279s
+Information: You may need to update /etc/fstab.
+
+[root@localhost ~]# parted /dev/sda mkpart primary 1280s    263423s
+Information: You may need to update /etc/fstab.
+
+[root@localhost ~]# parted /dev/sda mkpart primary 263424s  5242879s
+Information: You may need to update /etc/fstab.
+
+[root@localhost ~]# dd if=/dev/sdb1 of=/dev/sda1
+8192+0 records in
+8192+0 records out
+4194304 bytes (4.2 MB, 4.0 MiB) copied, 0.01922 s, 218 MB/s
+[root@localhost ~]# parted /dev/sda set 1 boot on
+Information: You may need to update /etc/fstab.
+
+[root@localhost ~]# parted /dev/sda set 1 prep on
+Information: You may need to update /etc/fstab.
+
+[root@localhost ~]# man mdadm
+[root@localhost ~]# mdadm -C /dev/md0 -l1 -n2 /dev/sda2 missing --metadata=1.2
+mdadm: /dev/sda2 appears to be part of a raid array:
+       level=raid1 devices=2 ctime=Fri Jan 19 10:43:51 2024
+Continue creating array? y
+mdadm: array /dev/md0 started.
+[root@localhost ~]# mkfs.ext4 /dev/sda2
+mke2fs 1.45.4 (23-Sep-2019)
+/dev/sda2 contains a linux_raid_member file system labelled 'localhost.localdomain:0'
+Proceed anyway? (y,N) y
+/dev/sda2 is apparently in use by the system; will not make a filesystem here!
+[root@localhost ~]# mkfs.ext4 /dev/md0
+mke2fs 1.45.4 (23-Sep-2019)
+/dev/md0 contains a ext4 file system
+        last mounted on /boot on Fri Jan 19 11:21:23 2024
+Proceed anyway? (y,N) y
+Creating filesystem with 261632 4k blocks and 65408 inodes
+Filesystem UUID: b03b513d-6b1c-4165-ba44-6bcece438a5d
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+[root@localhost ~]# mkdir /tmp/md0
+[root@localhost ~]# mount /dev/md0 /tmp/md0/
+[root@localhost ~]# rsync -a /boot/ /tmp/md0/
+[root@localhost ~]# sync
+[root@localhost ~]# umount /dev/md0
+[root@localhost ~]# umount /boot
+[root@localhost ~]# mount /dev/md0 /boot/
+[root@localhost ~]# blkid |grep md0
+/dev/md0: UUID="b03b513d-6b1c-4165-ba44-6bcece438a5d" TYPE="ext4"
+[root@localhost ~]# vi /etc/fstab
+[root@localhost ~]# mdadm -D /dev/md0
+/dev/md0:
+           Version : 1.2
+     Creation Time : Fri Jan 19 12:37:38 2024
+        Raid Level : raid1
+        Array Size : 1046528 (1022.00 MiB 1071.64 MB)
+     Used Dev Size : 1046528 (1022.00 MiB 1071.64 MB)
+      Raid Devices : 2
+     Total Devices : 1
+       Persistence : Superblock is persistent
+
+       Update Time : Fri Jan 19 12:39:23 2024
+             State : clean, degraded
+    Active Devices : 1
+   Working Devices : 1
+    Failed Devices : 0
+     Spare Devices : 0
+
+Consistency Policy : resync
+
+              Name : localhost.localdomain:0  (local to host localhost.localdomain)
+              UUID : 02129499:c8861878:329499a0:25572cec
+            Events : 22
+
+    Number   Major   Minor   RaidDevice State
+       0       8        2        0      active sync   /dev/sda2
+       -       0        0        1      removed
+[root@localhost ~]# mdadm /dev/md0 -a /dev/sdb2
+mdadm: added /dev/sdb2
+[root@localhost ~]# mdadm -C /dev/md1 -l1 -n2 /dev/sda3 missing --metadata=1.0
+mdadm: array /dev/md1 started.
+[root@localhost ~]# vgextend uos /dev/md1
+  Physical volume "/dev/md1" successfully created.
+  Volume group "uos" successfully extended
+[root@localhost ~]# pvs
+  PV         VG  Fmt  Attr PSize  PFree
+  /dev/md1   uos lvm2 a--  18.99g 18.99g
+  /dev/sdb3  uos lvm2 a--  18.99g     0
+[root@localhost ~]# pvmove /dev/sdb3 /dev/md1
+  /dev/sdb3: Moved: 0.31%
+  /dev/sdb3: Moved: 10.53%
+  /dev/sdb3: Moved: 71.78%
+  /dev/sdb3: Moved: 100.00%
+[root@localhost ~]# vgreduce uos /dev/sdb3
+  Removed "/dev/sdb3" from volume group "uos"
+[root@localhost ~]# pvremove /dev/sdb3
+  Labels on physical volume "/dev/sdb3" successfully wiped.
+[root@localhost ~]# mdadm /dev/md1 -a /dev/sdb3
+mdadm: added /dev/sdb3
+[root@localhost ~]# mdadm -D /dev/md1
+/dev/md1:
+           Version : 1.0
+     Creation Time : Fri Jan 19 12:41:23 2024
+        Raid Level : raid1
+        Array Size : 19917696 (18.99 GiB 20.40 GB)
+     Used Dev Size : 19917696 (18.99 GiB 20.40 GB)
+      Raid Devices : 2
+     Total Devices : 2
+       Persistence : Superblock is persistent
+
+       Update Time : Fri Jan 19 12:43:47 2024
+             State : clean, degraded, recovering
+    Active Devices : 1
+   Working Devices : 2
+    Failed Devices : 0
+     Spare Devices : 1
+
+Consistency Policy : resync
+
+    Rebuild Status : 8% complete
+
+              Name : localhost.localdomain:1  (local to host localhost.localdomain)
+              UUID : 7a8314da:2867e3f3:a5822e58:f521ea13
+            Events : 21
+
+    Number   Major   Minor   RaidDevice State
+       0       8        3        0      active sync   /dev/sda3
+       2       8       19        1      spare rebuilding   /dev/sdb3
+[root@localhost ~]# mdadm --examine --scan
+ARRAY /dev/md/0  metadata=1.2 UUID=02129499:c8861878:329499a0:25572cec name=localhost.localdomain:0
+ARRAY /dev/md/1  metadata=1.0 UUID=7a8314da:2867e3f3:a5822e58:f521ea13 name=localhost.localdomain:1
+[root@localhost ~]# mdadm --examine --scan > /etc/mdadm.conf
+[root@localhost ~]# mdadm -D /dev/md* |grep UUID
+              UUID : 02129499:c8861878:329499a0:25572cec
+              UUID : 7a8314da:2867e3f3:a5822e58:f521ea13
+[root@localhost ~]# mdadm -D /dev/md* |grep UUID >> /etc/default/grub
+[root@localhost ~]# vi /etc/default/grub
+[root@localhost ~]# grep GRUB_CMD /etc/default/grub
+GRUB_CMDLINE_LINUX="rd.md.uuid=02129499:c8861878:329499a0:25572cec rd.md.uuid=7a8314da:2867e3f3:a5822e58:f521ea13 crashkernel=auto rd.lvm.lv=uos/root rd.lvm.lv=uos/swap"
+[root@localhost ~]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+Found theme: /boot/grub2/themes/deepin/theme.txt
+Generating boot entries from BLS files...
+done
+[root@localhost ~]# grub2-install /dev/sda1
+Installing for powerpc-ieee1275 platform.
+Installation finished. No error reported.
+[root@localhost ~]# grub2-install /dev/sdb1
+Installing for powerpc-ieee1275 platform.
+Installation finished. No error reported.
+[root@localhost ~]# cp /boot/initramfs-4.18.0-147.up7.uelc20.ppc64le.img /boot/initramfs-4.18.0-147.up7.uelc20.ppc64le.img.bak0119
+[root@localhost ~]# dracut -f --mdadmconf
+[root@localhost ~]# lsblk
+NAME           MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
+sda              8:0    0   20G  0 disk
+©À©¤sda1           8:1    0    4M  0 part
+©À©¤sda2           8:2    0    1G  0 part
+©¦ ©¸©¤md0          9:0    0 1022M  0 raid1 /boot
+©¸©¤sda3           8:3    0   19G  0 part
+  ©¸©¤md1          9:1    0   19G  0 raid1
+    ©À©¤uos-root 253:0    0   17G  0 lvm   /
+    ©¸©¤uos-swap 253:1    0    2G  0 lvm   [SWAP]
+sdb              8:16   0   20G  0 disk
+©À©¤sdb1           8:17   0    4M  0 part
+©À©¤sdb2           8:18   0    1G  0 part
+©¦ ©¸©¤md0          9:0    0 1022M  0 raid1 /boot
+©¸©¤sdb3           8:19   0   19G  0 part
+  ©¸©¤md1          9:1    0   19G  0 raid1
+    ©À©¤uos-root 253:0    0   17G  0 lvm   /
+    ©¸©¤uos-swap 253:1    0    2G  0 lvm   [SWAP]
+sr0             11:0    1  6.9G  0 rom
+[root@localhost ~]# lsblk -fp
+NAME                       FSTYPE        LABEL                   UUID                                   MOUNTPOINT
+/dev/sda
+©À©¤/dev/sda1
+©À©¤/dev/sda2                linux_raid_me localhost.localdomain:0 02129499-c886-1878-3294-99a025572cec
+©¦ ©¸©¤/dev/md0               ext4                                  b03b513d-6b1c-4165-ba44-6bcece438a5d   /boot
+©¸©¤/dev/sda3                linux_raid_me localhost.localdomain:1 7a8314da-2867-e3f3-a582-2e58f521ea13
+  ©¸©¤/dev/md1               LVM2_member                           AMeipx-6AMP-ObwX-ooy5-TcxR-Wk9P-uJbXK1
+    ©À©¤/dev/mapper/uos-root xfs                                   9fb75b47-f68d-4c39-97ae-3736516178f5   /
+    ©¸©¤/dev/mapper/uos-swap swap                                  ee50c9ba-4187-4154-9f86-4f3554495081   [SWAP]
+/dev/sdb
+©À©¤/dev/sdb1
+©À©¤/dev/sdb2                linux_raid_me localhost.localdomain:0 02129499-c886-1878-3294-99a025572cec
+©¦ ©¸©¤/dev/md0               ext4                                  b03b513d-6b1c-4165-ba44-6bcece438a5d   /boot
+©¸©¤/dev/sdb3                linux_raid_me localhost.localdomain:1 7a8314da-2867-e3f3-a582-2e58f521ea13
+  ©¸©¤/dev/md1               LVM2_member                           AMeipx-6AMP-ObwX-ooy5-TcxR-Wk9P-uJbXK1
+    ©À©¤/dev/mapper/uos-root xfs                                   9fb75b47-f68d-4c39-97ae-3736516178f5   /
+    ©¸©¤/dev/mapper/uos-swap swap                                  ee50c9ba-4187-4154-9f86-4f3554495081   [SWAP]
+/dev/sr0                   iso9660       UnionTechOS             2021-01-13-02-46-39-00
+[root@localhost ~]# cat /etc/fstab
+
+#
+# /etc/fstab
+# Created by anaconda on Fri Jan 19 12:20:41 2024
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+/dev/mapper/uos-root    /                       xfs     defaults        0 0
+UUID=b03b513d-6b1c-4165-ba44-6bcece438a5d  /boot                   ext4    defaults        1 2
+#UUID=cd70c9eb-35c5-4626-96cd-ca21237d3a36 /boot                   ext4    defaults        1 2
+/dev/mapper/uos-swap    swap                    swap    defaults        0 0
+[root@localhost ~]# systemctl reboot
+
+Remote side unexpectedly closed network connection
+
+©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+
+Session stopped
+    - Press <Return> to exit tab
+    - Press R to restart session
+    - Press S to save terminal output to file
