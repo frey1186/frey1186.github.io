@@ -185,16 +185,22 @@
     <script src="/custom/default_files/tabler.js" defer="defer"></script>
     <script src="/custom/default_files/demo.js" defer="defer"></script>
     <script>
-	// replace c to span
-	var x = document.querySelectorAll('c')
-	var i;
-	for (i = 0; i < x.length; i++) {
-		var obj_span = document.createElement('span')
-		obj_span.innerHTML = x[i].innerHTML
-		obj_span.classList.add("badge")
-		obj_span.classList.add("bg-azure")
-		x[i].replaceWith(obj_span)
-	}
+	    // 替换代码块中得exptag
+	    const text = 'exptag';
+	    for (const el of document.querySelectorAll('span')) {
+	      if (el.textContent.includes(text)) {
+	        el.classList.add('number')
+	        let ret = el.innerText.replace(/exptag/g,"")
+	        el.innerText = ret
+	      }
+	    }
+	    // 替换<p>段落中得exptag
+	    for (const el of document.querySelectorAll('p')) {
+	      if (el.textContent.includes(text)) {
+	        let ret = el.innerHTML.replace(/exptag(\d+)/g,"<span class='number'>$1</span>")
+	        el.innerHTML = ret
+	      }
+	    }
     </script>
 
   </body></html>
