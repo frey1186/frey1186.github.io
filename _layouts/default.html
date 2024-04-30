@@ -195,7 +195,7 @@
 	      }
 	    }
 	    // 替换<p>段落中得exptag
-	    for (const el of document.querySelectorAll('p')) {
+	    for (const el of document.querySelectorAll('li, p')) {
 	      if (el.textContent.includes(text)) {
 	        let ret = el.innerHTML.replace(/exptag(\d+)/g,"<span class='number'>$1</span>")
 	        el.innerHTML = ret

@@ -37,3 +37,18 @@ pre.highlight {
 .card{
     box-shadow: rgba(30, 41, 59, 0.63) 0 2px 4px 0;
 }
+
+.number {
+    display: inline-grid;
+    border-radius: 50%;
+    background-color: #0650ff;
+    width: 1.5em;
+    height: 1.5em;
+    text-align: center;
+    vertical-align: middle;
+    color: #fff;
+    font-size: 12px;
+    line-height: 17px;
+    user-select:none;
+}
+
