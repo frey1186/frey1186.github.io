@@ -1,0 +1,34 @@
+#!/bin/busybox sh 
+
+BB=/bin/busybox
+
+for cmd in $($BB --list);do
+	$BB ln -s $BB /bin/$cmd
+done
+
+mkdir /tmp  && mount -t tmpfs none /tmp
+mkdir /proc && mount -t proc none /proc
+mkdir /sys  && mount -t sysfs none /sys
+
+mkdir -p /dev
+mknod /dev/console c 5 1
+mknod /dev/tty c 4 0
+mknod /dev/null c 1 3
+mknod /dev/zero c 1 5
+mknod /dev/random c 1 8
+mknod /dev/urandom c 1 9
+mknod /dev/sda b 8 0
+
+# load the e1000 drive and set nic
+insmod /modules/e1000.ko
+ip l set lo up
+ip l set eth0 up
+ip a add 10.0.0.25/24 dev eth0
+
+
+
+
+echo "Welcome to MinLinux!"
+setsid /bin/sh 
+sync 
+poweroff -f 

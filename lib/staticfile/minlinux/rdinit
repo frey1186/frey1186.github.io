@@ -1,0 +1,30 @@
+#!/bin/busybox sh 
+
+BB=/bin/busybox
+
+for cmd in $($BB --list);do
+	$BB ln -s $BB /bin/$cmd
+done
+
+mkdir /tmp  && mount -t tmpfs none /tmp
+mkdir /proc && mount -t proc none /proc
+mkdir /sys  && mount -t sysfs none /sys
+
+mknod /dev/tty c 4 0
+mknod /dev/null c 1 3
+mknod /dev/zero c 1 5
+mknod /dev/random c 1 8
+mknod /dev/urandom c 1 9
+mknod /dev/sda b 8 0
+
+#setsid /bin/sh   # exit  => switch to real root
+
+mkdir -p /newroot
+mount -t ext2 /dev/sda /newroot/
+cd /newroot/
+exec switch_root . /sbin/init
+
+
+#cp $BB /newroot/init
+#exec switch_root . /init
+
