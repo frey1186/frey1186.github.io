@@ -56,13 +56,13 @@ Linux workpc 5.15.153.1-microsoft-standard-WSL2 #1 SMP Fri Mar 29 23:14:13 UTC 2
 busybox 必须是静态链接的，否则运行时缺少依赖共享库就很麻烦。
 
 ```bash
-(py01) [frey@workpc:testlinux]$ file $(which busybox) exptag1
+(py01) [frey@workpc:testlinux]$ file $(which busybox) 
 /usr/sbin/busybox: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=01a9de12c01550ce06a53f129a8cbcde53913361, stripped
 (py01) [frey@workpc:testlinux]$ mkdir -p build/initramfs/bin/
 (py01) [frey@workpc:testlinux]$ cp $(which busybox) build/initramfs/bin/
 ```
 
-- exptag1 fedora提供的busybox正好是静态编译的，或者从官网直接下载静态编译包
+- fedora提供的busybox正好是静态编译的，或者从官网直接下载静态编译包
 
 准备一个内核bzImage, 正常的Linux发行版可以在/boot目录找到。
 
@@ -94,13 +94,13 @@ busybox 必须是静态链接的，否则运行时缺少依赖共享库就很麻
 我们直接制作一个init脚本，放在initramfs的/init位置上即可。
 
 ```bash
-(py01) [frey@workpc:testlinux]$ echo #!/bin/busybox sh  > build/initramfs/init exptag1
+(py01) [frey@workpc:testlinux]$ echo #!/bin/busybox sh  > build/initramfs/init
 (py01) [frey@workpc:testlinux]$ echo bin/busybox sh  >> build/initramfs/init
-(py01) [frey@workpc:testlinux]$ chmod +x build/initramfs/init exptag2
+(py01) [frey@workpc:testlinux]$ chmod +x build/initramfs/init
 ```
 
-- exptag1 需要添加`#!/bin/busybox sh`，否则无法直接执行该脚本
-- exptag2 需要添加执行权限，否则无法执行
+- 需要添加`#!/bin/busybox sh`，否则无法直接执行该脚本
+- 需要添加执行权限，否则无法执行
 
 
 制作initramfs
@@ -120,11 +120,11 @@ build  initramfs.cpio.gz  vmlinuz
 
 ```bash
 sudo qemu-system-x86_64 \
-                -serial mon:stdio -nographic \  exptag1
+                -serial mon:stdio -nographic \
                 -kernel vmlinuz \
                 -initrd initramfs.cpio.gz \
-                -machine accel=kvm:tcg \  exptag2
-                -append "console=ttyS0 quiet"  exptag3
+                -machine accel=kvm:tcg \
+                -append "console=ttyS0 quiet"
 ...
 # 进入这个最小的Linux
 sh: can't access tty; job control turned off
@@ -136,9 +136,9 @@ drwxr-xr-x    2 0        0               60 Jul 10 02:37 dev
 drwx------    2 0        0               40 Jul 10 02:37 root
 ```
 
-- exptag1 使用串口输出，并不显示图形界面 
-- exptag2 kvm加速选项，会适当提高运行速度
-- exptag3 执行console为ttyS0串口， quiet减少启动过程中的输出
+- 使用串口输出，并不显示图形界面 
+- kvm加速选项，会适当提高运行速度
+- 执行console为ttyS0串口， quiet减少启动过程中的输出
 
 
 # 二、完善一下
@@ -211,16 +211,23 @@ find /tmp -name e1000.ko.xz -exec cp {} . \;
 
 ```bash
 # load the e1000 drive and set nic
-insmod /modules/e1000.ko
+insmod /modules/e1000.ko.xz
 ip l set lo up
 ip l set eth0 up
 ip a add 10.0.0.25/24 dev eth0
 ```
 
+增加qemu启动选项，并提供网络启动脚本start-net.sh
+
+```bash
+-netdev tap,id=net0,script=start-net.sh  -device e1000,netdev=net0
+```
+
+
 # 三、参考
 
 - [init](/lib/staticfile/minlinux/init): 内核挂载根文件系统后运行的第一个用户空间程序,默认为"/sbin/init"；
-- [rdinit](lib/staticfile/minlinux/rdinit): 设置从initramfs中运行的第一个用户空间程序的绝对路径，默认为"/init";  
-- [Makefile](lib/staticfile/minlinux/Makefile): Makefile
-- [start-net.sh](lib/staticfile/minlinux/start-net.sh): qemu 启动网卡脚本
+- [rdinit](/lib/staticfile/minlinux/rdinit): 设置从initramfs中运行的第一个用户空间程序的绝对路径，默认为"/init";  
+- [Makefile](/lib/staticfile/minlinux/Makefile): Makefile
+- [start-net.sh](/lib/staticfile/minlinux/start-net.sh): qemu 启动网卡脚本
 - 参考 https://jyywiki.cn/OS/2024/lect18.md
