@@ -1,0 +1,10 @@
+---
+layout: default
+title: All
+---
+
+{% for post in site.posts %}
+<p>
+  {{ post.date }} | <a href="{{ post.url }}">{{ post.title }}</a>
+</p>
+{% endfor %}

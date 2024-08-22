@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+* Tabler - Premium and Open Source dashboard template with responsive and high quality UI.
+* @version 1.0.0-beta9
+* @link https://tabler.io
+* Copyright 2018-2022 The Tabler Authors
+* Copyright 2018-2022 codecalm.net Paweł Kuna
+* Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
+-->
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" async="" src="/custom/default_files/analytics.js"></script>
+    <script type="text/javascript" async="" src="/custom/default_files/js"></script>
+<!--     
+    <script defer="defer" data-domain="preview.tabler.io" src="/custom/default_files/plausible.js"></script>
+ -->    
+    <script async="" src="/custom/default_files/js_002"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-113467793-4');
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ page.title }}</title>
+    <link rel="preconnect" href="https://www.google-analytics.com/" crossorigin="">
+    <link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin="">
+    <link rel="preconnect" href="https://www.googletagmanager.com/" crossorigin="">
+    <meta name="msapplication-TileColor" content="#206bc4">
+    <meta name="theme-color" content="#206bc4">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+
+    <!-- 
+    <meta name="description" content="Tabler comes with tons of well-designed components and features. Start your adventure with Tabler and make your dashboard great again. For free!">
+    <meta name="twitter:image:src" content="https://preview.tabler.io/static/og.png">
+    <meta name="twitter:site" content="@tabler_ui">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Tabler: Premium and Open Source dashboard template with responsive and high quality UI.">
+    <meta name="twitter:description" content="Tabler comes with tons of well-designed components and features. Start your adventure with Tabler and make your dashboard great again. For free!">
+    <meta property="og:image" content="https://preview.tabler.io/static/og.png">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="640">
+    <meta property="og:site_name" content="Tabler">
+    <meta property="og:type" content="object">
+    <meta property="og:title" content="Tabler: Premium and Open Source dashboard template with responsive and high quality UI.">
+    <meta property="og:url" content="https://preview.tabler.io/static/og.png">
+    <meta property="og:description" content="Tabler comes with tons of well-designed components and features. Start your adventure with Tabler and make your dashboard great again. For free!"> 
+    -->
+    
+    <!-- CSS files -->
+    <link href="/custom/default_files/tabler.css" rel="stylesheet">
+    <link href="/custom/default_files/tabler-flags.css" rel="stylesheet">
+    <link href="/custom/default_files/tabler-payments.css" rel="stylesheet">
+    <link href="/custom/default_files/tabler-vendors.css" rel="stylesheet">
+    <link href="/custom/default_files/demo.css" rel="stylesheet">
+    <link href="/custom/main.css" rel="stylesheet">
+    <link href="/custom/code.css" rel="stylesheet">
+
+  </head>
+  <body class="theme-light">
+    <div class="page">
+      <header class="navbar navbar-expand-md navbar-dark d-print-none">
+                  <div class="container-xl">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+                      <a href="/">{{site.title}}</a>
+                    </h1>
+                    <div class="navbar-nav flex-row order-md-last">
+
+                      <div class="nav-item dropdown">
+                        <a href="/" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+                          <span class="avatar avatar-sm" style="background-image: url(/images/001.jpg)"></span>
+                        </a>
+                        <!-- <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                          <a href="#" class="dropdown-item">Set status</a>
+                          <a href="#" class="dropdown-item">Profile &amp; account</a>
+                          <a href="#" class="dropdown-item">Feedback</a>
+                          <div class="dropdown-divider"></div>
+                          <a href="#" class="dropdown-item">Settings</a>
+                          <a href="#" class="dropdown-item">Logout</a>
+                        </div> -->
+                      </div>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbar-menu">
+                      <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
+                        <ul class="navbar-nav">
+                          <!-- <li class="nav-item"> -->
+                            <!-- <a class="nav-link" href="/"><span class="nav-link-title">Home</span></a> -->
+                          <!-- </li> -->
+                          <li class="nav-item">
+                            <a class="nav-link" href="/os"><span class="nav-link-title">OS</span></a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="/linux"><span class="nav-link-title">Linux</span></a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" href="/archive"><span class="nav-link-title">Archive</span></a>
+                          </li>
+    
+                          <!-- 
+                           <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#navbar-third" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                              <span class="nav-link-title">
+                                Third
+                              </span>
+                            </a>
+                            <div class="dropdown-menu">
+                              <a class="dropdown-item" href="https://preview.tabler.io/#">
+                                First
+                              </a>
+                              <a class="dropdown-item" href="https://preview.tabler.io/#">
+                                Second
+                              </a>
+                              <a class="dropdown-item" href="https://preview.tabler.io/#">
+                                Third
+                              </a>
+                            </div>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link disabled" href="https://preview.tabler.io/#">
+                              <span class="nav-link-title">
+                                Disabled
+                              </span>
+                            </a>
+                          </li> 
+                          -->
+
+
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </header>
+      
+      <div class="page-wrapper">
+        
+        <div class="page-body">
+          <div class="container-xl">
+            <div class="card card-lg">
+              <div class="card-body markdown">
+                  <div class="row g-4">
+                 {{ content}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="footer footer-transparent d-print-none">
+          <div class="container-xl">
+            <div class="row text-center align-items-center flex-row-reverse">
+              <div class="col-lg-auto ms-lg-auto">
+                <span>{{ site.description}} © 2022</span>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <script src="/custom/default_files/bundle.js" integrity="sha384-9Z8PxByVWP+gIm/rTMPn9BWwknuJR5oJcLj+Nr9mvzk8nJVkVXgQvlLGZ9SIFEJF" crossorigin="anonymous"></script>
+    <script>
+      Sentry.init({
+        dsn: "https://8e4ad02f495946f888620f9fb99fd495@o484108.ingest.sentry.io/5536918",
+        release: "tabler@1.0.0-beta9",
+        integrations: [
+          new Sentry.Integrations.BrowserTracing()
+        ],
+
+        tracesSampleRate: 1.0,
+      });
+    </script>
+    <!-- Libs JS -->
+    <!-- Tabler Core -->
+    <script src="/custom/default_files/tabler.js" defer="defer"></script>
+    <script src="/custom/default_files/demo.js" defer="defer"></script>
+    <script>
+	    // 替换代码块中得exptag
+	    const text = 'exptag';
+	    for (const el of document.querySelectorAll('span')) {
+	      if (el.textContent.includes(text)) {
+	        el.classList.add('number')
+	        let ret = el.innerText.replace(/exptag/g,"")
+	        el.innerText = ret
+	      }
+	    }
+	    // 替换<p>段落中得exptag
+	    for (const el of document.querySelectorAll('li, p')) {
+	      if (el.textContent.includes(text)) {
+	        let ret = el.innerHTML.replace(/exptag(\d+)/g,"<span class='number'>$1</span>")
+	        el.innerHTML = ret
+	      }
+	    }
+    </script>
+
+  </body></html>

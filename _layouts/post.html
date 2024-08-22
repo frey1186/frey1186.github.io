@@ -3,11 +3,23 @@ layout: default
 ---
 
 
-{% include post-header.html%}
-  <div class="post-content">
-    <section id="content">
-    {{ content }}
-    </section>
-    <div class="clear"></div>
+<!-- post header -->
+<div>
+  <a href="/">首页</a>
+  -><a href="{{ page.url }}">{{ page.title }}</a>
+  <hr>
 </div>
-{% include post-footer.html%}
+
+
+<!-- post title -->
+
+<div>
+  <h1>{{ page.title }}</h1>
+  <p>{{ page.date | date: "%B %-d, %Y" }}</p>
+</div>
+
+
+<!-- post content -->
+<div>
+  {{ content }}
+</div>

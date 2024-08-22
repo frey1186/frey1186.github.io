@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+#
+# Version: 0.1
+#
 import time
 import random
 
@@ -117,9 +120,14 @@ def pt_gua(up, down, bian_yao):
     ben_gua = get_ben_gua(up, down)
     hu_gua = get_hu_gua(ben_gua)
     bian_gua = get_bian_gua(ben_gua, bian_yao)
-    print("本卦： %s, %d爻变" % (ben_gua.name, bian_yao))
-    print("互卦： %s" % hu_gua.name)
-    print("变卦： %s" % bian_gua.name)
+    print(f"本卦： %s, %d爻变, 上%s下%s，" % (ben_gua.name, bian_yao, ben_gua.up.wx.name, ben_gua.down.wx.name))
+    print(f"互卦： {hu_gua.name}, 上{hu_gua.up.wx.name}下{hu_gua.down.wx.name}" )
+    print(f"变卦： {bian_gua.name}, 上{bian_gua.up.wx.name}下{bian_gua.down.wx.name}")
 
 if __name__ == '__main__':
     pt_gua(*mk_gua())
+
+
+# Changelog
+# * version:0.1 2024-08-21
+#   - add printing.
