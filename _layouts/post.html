@@ -4,22 +4,26 @@ layout: default
 
 
 <!-- post header -->
-<div>
-  <a href="/">首页</a>
-  -><a href="{{ page.url }}">{{ page.title }}</a>
-  <hr>
+<div class="post-header">
+  <span><a href="/">首页</a></span>
+  ->
+  <span><a href="/tags#{{page.tags[0]}}">{{ page.tags[0] }}</a></span>
+  ->
+  <span><a href="{{ page.url }}">{{ page.title }}</a></span>
 </div>
 
 
 <!-- post title -->
 
-<div>
-  <h1>{{ page.title }}</h1>
+<div class="text-center">
+  <br><br>
+  <h1>{{ page.title }}</h1><br>
   <p>{{ page.date | date: "%B %-d, %Y" }}</p>
+  <br><br>
 </div>
 
 
 <!-- post content -->
-<div>
+<div class="post-content">
   {{ content }}
 </div>

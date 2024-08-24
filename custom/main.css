@@ -1,54 +1,26 @@
-
-/* for all pages 1024px */
-.container-xl{
-    max-width:1024px;
+/* body */
+.container{
+    max-width: 1024px;
 }
-
-/*  post content  */
-.post-content {
-    /*font-family: 'Source Serif Pro', 'Songti SC', 'SimSun', 'Serif', serif;*/
-    font-family: 'Noto Serif SC', "PingFang SC", "Microsoft YaHei", sans-serif;
-}
-
-.post-content h1{
-  border-bottom: gray solid 1px;
-  padding-bottom: 5px;
-  font-weight: bold;
-}
-
-.post-content h1,h2,h3,h4,p{
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-/* text-center */
-.text-center h1{
-	font-size: 25px;
-}
-
 /* font size for code */
 pre.highlight {
     font-size: 0.85rem;
-    border: 1px solid rgba(0, 16, 47, 0.5);
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    border: 1px solid rgba(61, 63, 66, 0.5);
+    border-radius: 5px;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    word-wrap: break-word;
 }
 
-.card{
-    box-shadow: rgba(30, 41, 59, 0.63) 0 2px 4px 0;
+/* post content */
+.post-content h1,h2,h3 {
+    font-size: 1.6rem;
 }
 
-.number {
-    display: inline-grid;
-    border-radius: 50%;
-    background-color: #0650ff;
-    width: 1.5em;
-    height: 1.5em;
-    text-align: center;
-    vertical-align: middle;
-    color: #fff;
-    font-size: 12px;
-    line-height: 17px;
-    user-select:none;
-}
 
+
+
+/* post header */
+.post-header {
+    font-size:0.9rem;
+}
