@@ -7,3 +7,8 @@ main.main-content h1,h2,h3 {
 	font-size: 1.1rem;
 	font-weight: bold;
 }
+
+h2.page-header a {
+	color: #fff;
+}
+
