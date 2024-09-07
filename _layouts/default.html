@@ -17,7 +17,14 @@
 
     <header class="page-header" role="banner">
       <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
-      <h2 class="project-tagline">{{ page.date | date: "%Y-%m-%d" | default: site.description | default: site.github.project_tagline }}</h2>
+      <h2 class="project-tagline">
+	     	{{ page.date | date: "%Y-%m-%d" | default: site.description | default: site.github.project_tagline }}
+	      	{% if page.date %}
+	      		{% for t in  page.tags %}
+                        <span><a href="/tags#{{ t }}">{{ t }}</a></span>
+                        {% endfor%}
+	      	{% endif %}
+      </h2>
     </header>
 
     <main id="content" class="main-content" role="main">
