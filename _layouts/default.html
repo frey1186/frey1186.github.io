@@ -21,7 +21,7 @@
 	     	{{ page.date | date: "%Y-%m-%d" | default: site.description | default: site.github.project_tagline }}
 	      	{% if page.date %}
 	      		{% for t in  page.tags %}
-                        <span><a href="/tags#{{ t }}">{{ t }}</a></span>
+                        <span><a href="/tags#{{ t }}" style="color: #fff">{{ t }}</a></span>
                         {% endfor%}
 	      	{% endif %}
       </h2>
