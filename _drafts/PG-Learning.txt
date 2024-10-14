@@ -1,0 +1,206 @@
+
+
+
+
+
+
+## download the cmake3
+
+wget  https://github.com/Kitware/CMake/releases/download/v3.29.5/cmake-3.29.5.tar.gz
+
+
+tar -xf cmake....tar.gz
+
+
+
+
+
+
+
+Build on K1 Power9 Linux, RedHat 7.6 (Kernel 4.14.0-115.8.1.el7a.ppc64le) with devtoolset-9.
+
+### 1. About Build ENV #########################################################################################
+
+# lscpu |grep -i arch
+Architecture:          ppc64le
+Model name:            POWER9 (architected), altivec supported
+
+# uname -r
+4.14.0-115.8.1.el7a.ppc64le
+
+# uname -m
+ppc64le
+
+### 2. Build mysql    ##########################################################################################
+
+Install dependencies
+# yum -y install zlib-devel bzip2-devel numactl-devel \
+       openssl-devel lz4-devel libxml2-devel wget readline-devel \
+       libevent libevent-devel jemalloc-devel libaio-devel git bison cmake cmake3 \
+       libtirpc libtirpc-devel numad libzstd libzstd-devel libedit-devel libicu libicu-devel \
+       protobuf protobuf-devel
+
+Install devtoolset-9
+# yum install devtoolset-9
+source /opt/rh/devtoolset-9/enable
+# type gcc
+gcc is /opt/rh/devtoolset-9/root/usr/bin/gcc
+# gcc --version 
+gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+
+
+# tar zxvf mysql-boost-8.0.33.tar.gz 
+# cd mysql-8.0.33
+# mkdir build;cd build;
+# cmake3 -LHA .. \
+  -DWITH_BOOST=../boost/boost_1_77_0 \
+  -DBUILD_CONFIG=mysql_release \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DCMAKE_C_COMPILER=`which gcc` \
+  -DCMAKE_C_FLAGS="-O3 -mcpu=native -mtune=native -mcmodel=large" \
+  -DCMAKE_CXX_COMPILER=`which g++` \
+  -DCMAKE_CXX_FLAGS="-O3 -mcpu=native -mtune=native -mcmodel=large" \
+  -DCMAKE_INSTALL_PREFIX=/opt/mysql/8.0.33 \
+  -DCMAKE_LINKER=`which gcc` \
+  -DCMAKE_AR=`which gcc-ar` \
+  -DCMAKE_NM=`which gcc-nm` \
+  -DCMAKE_RANLIB=`which gcc-ranlib` \
+  -DWITH_INNODB_MEMCACHED=1 \
+  -DWITH_SSL=system \
+  -DWITH_ZLIB=bundled \
+  -DWITH_JEMALLOC=ON \
+  -DUSE_LD_LLD=0 \
+  -DWITH_SYSTEMD=1 \
+  -DWITH_NUMA=ON 2>&1 | tee config.log
+# make -j32 VERBOSE=1 2>&1 | tee build.log
+# sed -i '85,$d' man/cmake_install.cmake
+# make install
+
+# cd /opt/mysql
+# tar zcf mysql-community-8.0.33-1.el7.ppc64le.bin.tar.gz ./8.0.33
+
+
+
+
+
+
+
+
+wget -c https://downloads.mysql.com/archives/get/p/23/file/mysql-boost-5.7.44.tar.gz
+
+
+wget -c https://github.com/powerfans/MySQL_binaries/releases/download/MySQL-5.7.43_built_on_rhel7_by_devtoolset-9/mysql-community-5.7.43-1.el7.ppc64le.bin.tar.gz
+
+
+yum -y install zlib-devel bzip2-devel numactl-devel \
+    openssl-devel lz4-devel libxml2-devel wget readline-devel \
+    libevent-devel  libaio-devel git bison cmake libtirpc-devel numad \
+    java-1.8.0-openjdk iotop dstat perf java-1.8.0-openjdk-devel nmon
+
+    jemalloc-devel
+
+
+
+rm -rf build && mkdir -p build && cd build  && \
+cmake .. \
+  -DBUILD_CONFIG=mysql_release \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DCMAKE_C_COMPILER=`which gcc` \
+  -DCMAKE_C_FLAGS="-O3 -mcpu=native -mtune=native -mcmodel=large" \
+  -DCMAKE_CXX_COMPILER=`which g++` \
+  -DCMAKE_CXX_FLAGS="-O3 -mcpu=native -mtune=native -mcmodel=large" \
+  -DCMAKE_INSTALL_PREFIX=/home/mysql/5.7.44 \
+  -DCMAKE_LINKER=`which gcc` \
+  -DCMAKE_AR=`which gcc-ar` \
+  -DCMAKE_NM=`which gcc-nm` \
+  -DCMAKE_RANLIB=`which gcc-ranlib` \
+  -DWITH_INNODB_MEMCACHED=ON \
+  -DWITH_BOOST=../boost/boost_1_59_0 \
+  -DWITH_NUMA=ON \
+    2>&1 | tee config.log    
+
+
+make -j 32 && make install
+
+
+
+
+分区表：
+
+按行 
+按列
+哈希
+
+
+行列存储区别：OLTP  OLAP
+
+
+
+NUMA优化，绑定内核的思路，
+
+
+迁移工具： 迁移结构？还是迁移数据？
+- 支持多种数据库对象；
+- 存储过程和函数的转换；
+
+
+
+
+
+#体系结构：
+
+- 进程结构：postgres-master, postgres主程序， fork创建辅助程序： 垃圾回收？日志写？归档？后台写？检查点？统计信息？
+
+- 内存结构：
+  - 本地内存：维护、排序、临时表
+  - 共享内存：shared buffer pool，wal buffer，commitlog buffer
+
+- 存储结构：
+  - 数据目录结构：base，global，pg_*, postgresql.conf, pg_hba.conf, 
+  - 文件保存： 表空间单独
+    base或者表空间/databse的oid/表oid
+    表文件大于1g自动分割，表文件结构（表头+item...+tuple对应行倒着放)
+
+
+
+事务：
+- ACID 原则；
+- 隔离级别：  
+  - 读未提交，读已提交，可重复读，序列化；
+  - 脏读， 不可重复读， 幻读
+- PG中默认读已提交， 读未提交的实现=读已提交，不可能出现脏读
+- PG中MVCC更新行的时候，在行后面添加一个新行，与mysql和oracle使用undo表空间不同；
+
+
+备份和恢复：
+- copy
+- pg_dump  pg_dumpall
+- pg_restore 
+- psql 
+
+
+
+SQL语句类型：
+- DDL  -- 定义语言，建表..  CREATE、 ALTER和DROP。
+- DML  -- 操作语言，增删改查  insert update
+- DCL  -- 控制语言，源命令
+- DQL  -- 合并查询，多个select
+
+数据类型： 数值类型、时间、字符串、数组、布尔、
+
+
+
+
+
+/opt/sysbench/bin/sysbench --test=/opt/sysbench/share/sysbench/oltp_read_only.lua \
+--pgsql-host=10.128.11.219  --pgsql-port=5432 --pgsql-user=test --pgsql-password=test \
+--pgsql-db=test --oltp-tables-count=3 --oltp-table-size=50000 \
+--report-interval=20 --threads=16 \
+prepare
+
+
+
+oracle dg 三种模式：
+最大可用： 至少一个备库写完成，如果没有就切换成最大性能模式；
+最大性能： 主库写完，不管了，异步写备库；
+最大保护： 至少一个备库写完成，如果没有，停止运行；
